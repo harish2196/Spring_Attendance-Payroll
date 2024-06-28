@@ -1,5 +1,5 @@
 package com.chainsys.payrollapplication.model;
 
-public class EmployeeDocument {
+public class PayrollDocument {
 
 }

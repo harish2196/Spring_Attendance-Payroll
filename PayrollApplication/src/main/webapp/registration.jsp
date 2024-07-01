@@ -22,7 +22,7 @@
                 <div class="signup-form">
                     <h2 class="form-title">Sign up</h2>
 
-                    <form  action="/register" class="register-form" id="register-form" enctype="multipart/form-data">
+                    <form  action="/register" method="post" class="register-form" id="register-form" enctype="multipart/form-data">
                        
                         <div class="form-group">
                             <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>

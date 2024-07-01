@@ -3,7 +3,6 @@ package com.chainsys.payrollapplication.model;
 import org.springframework.stereotype.Component;
 
 
-@Component
 public class EmployeeDetails {
 
     public int emp_code;
@@ -79,11 +78,10 @@ public class EmployeeDetails {
 		this.salary = salary;
 	}
 
-	// Default constructor (required by Spring)
     public EmployeeDetails() {
     }
 
-    // Constructor with necessary fields
+ 
     public EmployeeDetails(int emp_code, String username, String designation, String useremail, String userpassword, String usermobile, byte[] imageData, int salary) {
         this.emp_code = emp_code;
         this.username = username;
@@ -95,8 +93,7 @@ public class EmployeeDetails {
         this.salary = salary;
     }
 
-    // Getters and setters
-    // toString() method
+    
 }
 
 

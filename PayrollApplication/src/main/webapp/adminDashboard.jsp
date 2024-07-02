@@ -161,7 +161,16 @@
         .card1 h3 {
             margin: 10px 0;
         }
+        .logout{
+        margin-left:-12%;
+        font-size:21px;
+     
+        }
+         .logout:hover{
+         background: rgba(0, 0, 0, 0.1);
         
+         }
+         
     </style>
 </head>
 <body>
@@ -177,8 +186,8 @@
                
                 <li><a href="switch.jsp"><i class="fas fa-envelope"></i> Messages</a></li>
                
-                <li> <form action="Login" method="get">  
-          <a href="http://localhost:8080/ProductServlet/"> <i class="fas fa-sign-out-alt"></i> <input type="submit" style="background-color:transparent;border:none;color:white;" value="Logout"></a>
+                <li> <form action="/checkout" class="logout" method="post">  
+       <a href="adminDashboard.jsp"> <i class="fas fa-sign-out-alt"></i> <input type="submit" style="background-color:transparent;border:none;color:white;" value="Logout"></a>
     </form>
     </li>
             </ul>
@@ -193,7 +202,7 @@
            <div class="card">
     <i class="fas fa-cube"></i>
     <h3>Update Employee Details</h3>
-    <form action="ProjectDemo" method="get">
+    <form action="/getEmployeeDetails" method="get">
         <button style="font-size: 17px;font-weight: bold;color:black;" type="submit">View Details</button>
     </form>
 </div>

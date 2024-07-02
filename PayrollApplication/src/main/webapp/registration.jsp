@@ -6,7 +6,6 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>Sign Up</title>
 
-
 <link rel="stylesheet"
 	href="fonts/material-icon/css/material-design-iconic-font.min.css">
 <link rel="stylesheet" href="css/style.css">
@@ -22,7 +21,7 @@
                 <div class="signup-form">
                     <h2 class="form-title">Sign up</h2>
 
-                    <form  action="/register" method="post" class="register-form" id="register-form" enctype="multipart/form-data">
+                    <form  action="/register" method="post" class="register-form" id="register-form" >
                        
                         <div class="form-group">
                             <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
@@ -32,7 +31,7 @@
                         
                           <div class="form-group">
                             <label for="role"><i class="zmdi zmdi-account-circle"></i></label>
-                            <input type="text" name="role" id="role" placeholder="Designation" required="required" />
+                            <input type="text" name="role" id="role" placeholder="Designation" pattern="[A-Za-z]{2,20}" required="required" />
                         </div>
                         
                         <div class="form-group">
@@ -53,11 +52,13 @@
 
   <div class="form-group">
                             <label for="pass"><i class="zmdi zmdi-lock"></i></label>
-                            <input type="password" name="pass" id="pass" placeholder="Password" required="required" />
+                            <input type="password" name="pass" id="pass" placeholder="Password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+.])(?=.*\\d).{8,}$"
+                             required="required" />
                         </div>
                         <div class="form-group">
                             <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
-                            <input type="password" name="re_pass" id="re_pass" placeholder="Repeat your password" required="required" />
+                            <input type="password" name="re_pass" id="re_pass" placeholder="Repeat your password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+.])(?=.*\\d).{8,}$"
+                             required="required" />
                         </div>
                         
                         <div class="form-group">
@@ -81,6 +82,7 @@
         </div>
     </section>
 </div>
+
 
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="js/main.js"></script>

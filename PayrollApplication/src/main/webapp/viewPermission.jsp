@@ -129,7 +129,6 @@
 
             var start = new Date('1970-01-01T' + startTime + 'Z');
             var end = new Date('1970-01-01T' + endTime + 'Z');
-
         
             var maxEndTime = new Date(start.getTime());
             maxEndTime.setHours(maxEndTime.getHours() + 2);

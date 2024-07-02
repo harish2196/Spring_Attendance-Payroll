@@ -2,17 +2,29 @@ package com.chainsys.payrollapplication.model;
 
 public class LeaveReport {
 
-	 int emp_code;
+	 int empCode;
 	 String name;
 	 String fromdate;
-	 public int getEmp_code() {
-		return emp_code;
+	 public String getLeaveType() {
+		return leaveType;
 	}
-	public LeaveReport() {
-		super();
+	public void setLeaveType(String leaveType) {
+		this.leaveType = leaveType;
 	}
-	public void setEmp_code(int emp_code) {
-		this.emp_code = emp_code;
+	String todate;
+	 String leaveType;
+	 
+	public String getTodate() {
+		return todate;
+	}
+	public void setTodate(String todate) {
+		this.todate = todate;
+	}
+	public int getEmpCode() {
+		return empCode;
+	}
+	public void setEmpCode(int empCode) {
+		this.empCode = empCode;
 	}
 	public String getName() {
 		return name;
@@ -20,16 +32,7 @@ public class LeaveReport {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public LeaveReport(int emp_code, String name, String fromdate, String toDate, String leaveType, String leaveCount,
-			String status) {
-		super();
-		this.emp_code = emp_code;
-		this.name = name;
-		this.fromdate = fromdate;
-		this.toDate = toDate;
-		this.leaveType = leaveType;
-		this.leaveCount = leaveCount;
-		this.status = status;
+	public LeaveReport() {
 	}
 	public String getFromdate() {
 		return fromdate;
@@ -37,34 +40,6 @@ public class LeaveReport {
 	public void setFromdate(String fromdate) {
 		this.fromdate = fromdate;
 	}
-	public String getToDate() {
-		return toDate;
-	}
-	public void setToDate(String toDate) {
-		this.toDate = toDate;
-	}
-	public String getLeaveType() {
-		return leaveType;
-	}
-	public void setLeaveType(String leaveType) {
-		this.leaveType = leaveType;
-	}
-	public String getLeaveCount() {
-		return leaveCount;
-	}
-	public void setLeaveCount(String leaveCount) {
-		this.leaveCount = leaveCount;
-	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	String toDate;
-	 String leaveType;
-	 String leaveCount;
-	 String status;
 	
 	
 }

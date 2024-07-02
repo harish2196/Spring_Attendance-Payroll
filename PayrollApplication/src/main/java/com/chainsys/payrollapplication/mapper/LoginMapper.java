@@ -5,15 +5,15 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.chainsys.payrollapplication.model.EmployeeDetails;
+import com.chainsys.payrollapplication.model.Employees;
 
-public class LoginMapper  implements RowMapper<EmployeeDetails> {
+public class LoginMapper  implements RowMapper<Employees> {
 
 	@Override
-	public EmployeeDetails mapRow(ResultSet rs, int rowNum) throws SQLException {		
-		 EmployeeDetails employeeDetails = new EmployeeDetails();
-	        employeeDetails.setUsername(rs.getString("username"));
-	        employeeDetails.setUserpassword(rs.getString("userpassword"));
+	public Employees mapRow(ResultSet rs, int rowNum) throws SQLException {		
+		Employees employeeDetails = new Employees();
+	        employeeDetails.setUserName(rs.getString("username"));
+	        employeeDetails.setUserPassword(rs.getString("userpassword"));
 			return employeeDetails;
 	}
 

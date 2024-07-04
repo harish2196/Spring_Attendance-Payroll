@@ -1,18 +1,23 @@
 package com.chainsys.payrollapplication.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.chainsys.payrollapplication.mapper.AdminReportMapper;
+import com.chainsys.payrollapplication.mapper.CheckInOutHandler;
 import com.chainsys.payrollapplication.mapper.GetEmpCodeMapper;
 import com.chainsys.payrollapplication.mapper.LoginMapper;
 import com.chainsys.payrollapplication.mapper.PayrollMapper;
 import com.chainsys.payrollapplication.model.AdminReport;
+import com.chainsys.payrollapplication.model.CheckInsAndCheckOuts;
 import com.chainsys.payrollapplication.model.Employees;
 import com.chainsys.payrollapplication.model.LeaveReport;
 import com.chainsys.payrollapplication.model.PermissionCount;
@@ -22,7 +27,7 @@ public class PayrollDAOImpl implements PayrollDAO {
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
-	
+
 
 	public void insertEmployee(Employees employees) {
 		String insertQuery = "INSERT INTO Employee_details (emp_code, username, designation, useremail, userpassword, usermobile, image, salary) " +
@@ -100,25 +105,50 @@ public class PayrollDAOImpl implements PayrollDAO {
 		System.out.println("Rows Affected: " + rowsAffected);
 	}
 
-	public Employees selectEmployee() {
-		String getAllQuery = "SELECT emp_code, username, designation, useremail, userpassword, usermobile,image, salary FROM Employee_details";
+	public List<Employees> viewEmployeeDetails() {
+		String getAllQuery = "SELECT emp_code,username,designation,useremail,userpassword,usermobile,image,salary FROM Employee_details";
+		return jdbcTemplate.query(getAllQuery, new PayrollMapper());
+	}
+
+	public List<CheckInsAndCheckOuts> viewCheckInsAndOuts() {
+		String getAllQuery = "SELECT emp_code,name,checkin_time,checkout_time FROM checkins_checkouts";
+		return jdbcTemplate.query(getAllQuery, new CheckInOutHandler());
+	}
+
+	public List<AdminReport> getComments() {
+		String getAllQuery = "SELECT emp_code, name, report_text FROM admin_report";
+		return jdbcTemplate.query(getAllQuery, new AdminReportMapper());
+	}
+
+
+	public boolean isUserExist(String useremail, String usermobile) {
+		String sql = "SELECT count(*) FROM Employee_details WHERE useremail = ? AND usermobile = ?";
 		try {
-			Employees employee = jdbcTemplate.queryForObject(getAllQuery, new PayrollMapper());
-			return employee;    
-		}catch(NullPointerException | IncorrectResultSizeDataAccessException e){
-			return null;
+			int count = jdbcTemplate.queryForObject(sql, Integer.class, useremail, usermobile);
+			return count > 0;
+		} catch (EmptyResultDataAccessException e) {
+			return false;
 		}
 	}
-	
-	public boolean isUserExist(String useremail, String usermobile) {
-	    String sql = "SELECT count(*) FROM Employee_details WHERE useremail = ? AND usermobile = ?";	    
-	    try {
-	        String count = jdbcTemplate.queryForObject(sql, String.class, useremail, usermobile);
-	        return true;
-	    } catch (EmptyResultDataAccessException e) {
-	    }
-		return false;
+
+	public void updateEmployeeDetails(Employees employee) {
+		String updateQuery = "UPDATE Employee_details SET username=?, designation=?, useremail=?, usermobile=?, salary=? WHERE emp_code=?";
+		Object[] params = {employee.getUserName(), employee.getDesignation(),
+				employee.getUserEmail(), employee.getUserMobile(),
+				employee.getSalary(), employee.getEmpCode()};	        
+		int rowsAffected = jdbcTemplate.update(updateQuery, params);
+		System.out.println("Rows Affected by update operation: " + rowsAffected);
 	}
+
+	public void deleteEmployeeById(int id) {
+
+		String deleteQuery = "DELETE FROM Employee_details WHERE emp_code=?";
+		int rowsAffected = jdbcTemplate.update(deleteQuery, id);
+		System.out.println("Rows Affected by delete operation: " + rowsAffected);
+	} 
+
+
+
 
 }
 

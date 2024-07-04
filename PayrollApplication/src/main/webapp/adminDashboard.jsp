@@ -182,7 +182,7 @@
         <nav>
             <ul>
                 <li><a href="AdminDashboard.jsp"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="Contact.jsp"><i class="fas fa-user"></i> Contact</a></li>
+                <li><a href="contact.jsp"><i class="fas fa-user"></i> Contact</a></li>
                
                 <li><a href="switch.jsp"><i class="fas fa-envelope"></i> Messages</a></li>
                
@@ -209,7 +209,7 @@
             <div class="card">
                 <i class="fas fa-users"></i>
                 <h3>Checkin'S & Checkout'S</h3>
-                 <form action="LeaveServlet" method="get">
+                 <form action="/checkInOut" method="get">
             <button style="font-size: 17px;font-weight: bold;color:black;" type="submit">View Details</button>
             </form>
             </div>
@@ -227,7 +227,7 @@
      <div class="card1">       
                 <i class="fas fa-comment"></i>
                 <h3>Comments</h3>
-                  <form action="AdminReport" class="a1" method="get">
+                  <form action="/comments" class="a1" method="get">
     <button style="font-size: 17px;font-weight: bold;color:black;" type="submit" value="submit">View Details</button>            
 </form>
           </div>  </div>

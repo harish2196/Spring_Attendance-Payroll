@@ -319,7 +319,7 @@ if (session.getAttribute("username") == null) {
             <a class="nav-link" href="JoinUs.jsp">Join Us</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="Contact.jsp">Contact</a>
+            <a class="nav-link" href="contact.jsp">Contact</a>
           </li>
            <li class="nav-item">
       <form action="/checkout" method="post" class="logout">

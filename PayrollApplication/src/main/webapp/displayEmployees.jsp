@@ -1,15 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="com.chainsys.payrollapplication.model.*" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.chainsys.payrollapplication.model.Employees" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Employee Details</title>
+    <title>Employee Personal Details</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-     body {
+        body {
             font-family: Arial, sans-serif;
-           
             background-color: linen;
         }
         h1 {
@@ -25,7 +25,6 @@
         }
         th, td {
             padding: 12px;
-            text-align: left;
             text-align: center;
             border-bottom: 1px solid #ddd;
         }
@@ -33,7 +32,7 @@
             background-color: #f2f2f2;
             text-align: center;
             color: #333;
-            text-decoration: underline;
+            text-decoration: none;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         tr:hover {
@@ -47,136 +46,30 @@
             padding: 5px 10px;
             cursor: pointer;
         }
-      .delete-btn {
-            background-color: darkgreen;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
-        .delete-btn:hover {
-            background-color: #45a049;
-        }
-        .delete-button {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
-        .delete-button:hover {
-            background-color: firebrick;
-        }
-         .custom-nav {
-            background-color: lightgray;
-            padding: 10px 5px;
-            width: 39%;
-          margin-left: 27%;
-          margin-top: 3%;
-            border-radius: 20px;
-            overflow: hidden;
-            border: none;
-            box-shadow: 1px 7px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .custom-nav a {
-            float: left;
-            display: block;
-            color: #333;
-           
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            font-size: 17px;
-        }
-
-        .custom-nav a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-
-        .custom-dropdown {
-            float: left;
-            overflow: hidden;
-        }
-
-        .custom-dropdown .custom-dropbtn {
-            font-size: 17px;
-            border: none;
-            outline: none;
-            color: #333;
-            padding: 14px 16px;
-            background-color: inherit;
-            margin: 0;
-        }
-
-        .custom-dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-
-        .custom-dropdown-content a {
-            float: none;
-            color: #333;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            text-align: left;
-        }
-
-        .custom-dropdown-content a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-
-        .custom-dropdown:hover .custom-dropdown-content {
-            display: block;
-        }
-
-        .custom-dropdown:after {
-            content: "";
-            clear: both;
-            display: table;
-        }
-
-
-.custom-dropdown-content .a1 button {
-    border: none; 
-    background: none;
-    padding: 0; 
-    font: inherit; 
-    cursor: pointer; 
-}
-
-.custom-dropdown-content .a1 button:hover {
-     background-color: lightgray; 
-}
-   .logout input[type="submit"] {
-    background-color: transparent; 
-    border: none;
-    color: inherit;
-    cursor: pointer; 
-     color: lightgray;
-     margin-top:10%;
-   
-}
-   .btn-search {
+        .btn-primary {
             background-color: green;
             border-color: green;
-            color: white;
-            padding: 3.3px 7px;
-            margin-left:0.2%;
-            margin-top:-0.2%;
         }
-        .btn-search:hover {
-            background-color: darkgreen;
-            border-color: darkgreen;
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
         }
-     
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: 	#32CD32;
+            border-color: green;
+        }
+        .btn-danger:hover, .btn-danger:focus {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        .logout input[type="submit"] {
+            background-color: transparent; 
+            border: none;
+            color: inherit;
+            cursor: pointer; 
+            color: lightgray;
+            margin-top: 10%;
+        }
     </style>
 </head>
 <body>
@@ -190,7 +83,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-             
                 <li class="nav-item">
                     <p style="color: white; margin-top: 6.7%; bottom: 0;">
                         Welcome, <%= session.getAttribute("username") %>
@@ -206,8 +98,8 @@
                     <a class="nav-link" href="Contact.jsp">Contact</a>
                 </li>
                 <li class="nav-item">
-                    <form action="Login" class="logout" method="get">
-                        <a href="http://localhost:8080/ProductServlet/">
+                    <form action="/adminCheckOut" class="logout" method="get">
+                        <a href="adminDashboard.jsp">
                             <input type="submit" value="Logout">
                         </a>
                     </form>
@@ -228,39 +120,37 @@
                 <th>Email</th>
                 <th>Mobile</th>
                 <th>Salary</th>
-                <th>Image</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            <%
-                Employees employee = (Employees) request.getAttribute("employee");
-                if (employee != null) {
+            <% 
+            List<Employees> employeeList = (List<Employees>) request.getAttribute("employee");
+            if (employeeList != null && !employeeList.isEmpty()) {
+                for (Employees employee : employeeList) {
             %>
-                <tr>
-                  <td><%= employee.getEmpCode() %></td>
-    <td><%= employee.getUserName() %></td>
-    <td><%= employee.getDesignation() %></td>
-    <td><%= employee.getUserEmail() %></td>
-    <td><%= employee.getUserMobile() %></td>
-    <td><%= employee.getSalary() %></td>
-                    <%-- <td>
-                        <img src="<%= employee.getImageUrl() %>" alt="Employee Image" width="100" height="100"/>
-                    </td> --%>
-                    <td>
-                       
-                        <a class="btn btn-primary" href="update.jsp?id=<%= employee.getEmpCode() %>&name=<%= employee.getUserName()%> ">Update</a>
-                        <form action="UpdateAndDelete" method="post" style="display: inline-block;">
-                            <input type="hidden" name="action" value="delete">
-                            <input type="hidden" name="id" value="<%= employee.getEmpCode() %>">
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            <% } else { %>
-                <tr>
-                    <td colspan="8">No employee found.</td>
-                </tr>
+            <tr>
+                <td><%= employee.getEmpCode() %></td>
+                <td><%= employee.getUserName() %></td>
+                <td><%= employee.getDesignation() %></td>
+                <td><%= employee.getUserEmail() %></td>
+                <td><%= employee.getUserMobile() %></td>
+                <td><%= employee.getSalary() %></td>
+                <td>                    
+                    <a class="btn btn-primary" href="updatePage.jsp?id=<%= employee.getEmpCode() %>&name=<%= employee.getUserName()%>&designation=<%= employee.getDesignation() %>&email=<%= employee.getUserEmail() %>&mobile=<%= employee.getUserMobile() %>&salary=<%= employee.getSalary() %>">Update</a>
+                    <form action="/delete" method="post" style="display: inline-block;">
+                        <input type="hidden" name="id" value="<%= employee.getEmpCode() %>">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            <% 
+                }
+            } else {
+            %>
+            <tr>
+                <td colspan="7">No employees found.</td>
+            </tr>
             <% } %>
         </tbody>
     </table>

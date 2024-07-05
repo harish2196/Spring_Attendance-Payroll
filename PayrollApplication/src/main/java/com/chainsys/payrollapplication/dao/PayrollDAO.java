@@ -9,11 +9,11 @@ import com.chainsys.payrollapplication.model.AdminReport;
 import com.chainsys.payrollapplication.model.CheckInsAndCheckOuts;
 import com.chainsys.payrollapplication.model.Employees;
 import com.chainsys.payrollapplication.model.LeaveReport;
+import com.chainsys.payrollapplication.model.PayrollList;
 import com.chainsys.payrollapplication.model.PermissionCount;
 
 @Repository
 public interface PayrollDAO {
-
 
 	public void insertEmployee(Employees employees);
 	public  boolean login(String username, String password);
@@ -29,4 +29,21 @@ public interface PayrollDAO {
 	public void updateEmployeeDetails(Employees employee);
 	public void deleteEmployeeById(int id);
 	public List<AdminReport> getComments();
+	public List<PermissionCount> getPermissionInfo();
+	public List<LeaveReport> getAllLeaveReports();
+	public boolean updatePermissionStatus(int empcode, String status); 
+	public int remainRejectLeaveDays(int empCode);
+	public boolean insertTotalLeaveDays(int empCode, int totalLeaveDays);
+	public int getTotalLeaveDays(int empCode) ;
+	public boolean updateLeaveStatus(int empCode, String status);
+	public List<CheckInsAndCheckOuts> getEmployeeCheckInOut(int empCode);
+	public int getTotalWorkingHours(int empCode); 
+	public String getEmployeeName(int empCode);
+	public String getEmployeeEmail(int empCode);
+	public int countPermissionsPayroll(int empCode);
+	public int countSickLeavePayroll(int empCode);
+	public int countCasualLeavePayroll(int empCode);
+	public int getTotalCheckinCount(int empCode);
+	public int getEmployeeSalary(int empCode);
+	public int insertOrUpdateLeavePermission(PayrollList payrollList);
 }

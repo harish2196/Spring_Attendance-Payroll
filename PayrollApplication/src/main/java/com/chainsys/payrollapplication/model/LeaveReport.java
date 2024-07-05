@@ -5,7 +5,21 @@ public class LeaveReport {
 	 int empCode;
 	 String name;
 	 String fromdate;
-	 public String getLeaveType() {
+	 String leaveCount;
+	 String leaveStatus;
+	 public String getLeaveCount() {
+		return leaveCount;
+	}
+	public void setLeaveCount(String leaveCount) {
+		this.leaveCount = leaveCount;
+	}
+	public String getLeaveStatus() {
+		return leaveStatus;
+	}
+	public void setLeaveStatus(String leaveStatus) {
+		this.leaveStatus = leaveStatus;
+	}
+	public String getLeaveType() {
 		return leaveType;
 	}
 	public void setLeaveType(String leaveType) {

@@ -14,12 +14,15 @@ import org.springframework.stereotype.Repository;
 import com.chainsys.payrollapplication.mapper.AdminReportMapper;
 import com.chainsys.payrollapplication.mapper.CheckInOutHandler;
 import com.chainsys.payrollapplication.mapper.GetEmpCodeMapper;
+import com.chainsys.payrollapplication.mapper.LeaveInfoMapper;
 import com.chainsys.payrollapplication.mapper.LoginMapper;
 import com.chainsys.payrollapplication.mapper.PayrollMapper;
+import com.chainsys.payrollapplication.mapper.PermissionMapper;
 import com.chainsys.payrollapplication.model.AdminReport;
 import com.chainsys.payrollapplication.model.CheckInsAndCheckOuts;
 import com.chainsys.payrollapplication.model.Employees;
 import com.chainsys.payrollapplication.model.LeaveReport;
+import com.chainsys.payrollapplication.model.PayrollList;
 import com.chainsys.payrollapplication.model.PermissionCount;
 
 @Repository
@@ -141,11 +144,183 @@ public class PayrollDAOImpl implements PayrollDAO {
 	}
 
 	public void deleteEmployeeById(int id) {
-
 		String deleteQuery = "DELETE FROM Employee_details WHERE emp_code=?";
 		int rowsAffected = jdbcTemplate.update(deleteQuery, id);
 		System.out.println("Rows Affected by delete operation: " + rowsAffected);
 	} 
+
+	public List<PermissionCount> getPermissionInfo(){
+		String getAllQuery = "SELECT emp_code, name, date, start_time, end_time, status, permission FROM permission_count";
+		return jdbcTemplate.query(getAllQuery, new PermissionMapper());
+	}
+
+	public List<LeaveReport> getAllLeaveReports() {
+		String getAllQuery = "SELECT emp_code, name, from_date, to_date, leave_type, leave_Count, status FROM Leave_report";
+		return jdbcTemplate.query(getAllQuery, new LeaveInfoMapper());
+	}
+
+	public boolean updatePermissionStatus(int empCode, String status) {
+		boolean isSuccess = false;
+
+		String updateQuery = "UPDATE permission_count SET status = ? WHERE emp_code = ?";
+		int rowCount = jdbcTemplate.update(updateQuery, status, empCode);
+
+		if (rowCount > 0) {
+			System.out.println("Data updated successfully.");
+			isSuccess = true;
+
+			if ("accepted".equalsIgnoreCase(status)) {
+				String updatePermission = "UPDATE permission_count SET permission = permission + 1 WHERE emp_code = ?";
+				jdbcTemplate.update(updatePermission, empCode);
+			} else if ("rejected".equalsIgnoreCase(status)) {
+				String updatePermission = "UPDATE permission_count SET permission = permission WHERE emp_code = ?";
+				jdbcTemplate.update(updatePermission, empCode);
+			}
+		}
+
+		return isSuccess;
+	}
+
+	public int remainRejectLeaveDays(int empCode) {
+		String query = "SELECT SUM(DATEDIFF(to_date, from_date)) AS total_days FROM Leave_report WHERE emp_code = ?";
+		Integer totalLeaveDays = jdbcTemplate.queryForObject(query, Integer.class,empCode);
+		if (totalLeaveDays != null) {
+			return totalLeaveDays - 1;
+		} else {
+			return 0; 
+		}
+	}
+
+	public int getTotalLeaveDays(int empCode) {
+		String query = "SELECT SUM(DATEDIFF(to_date, from_date)) AS total_days FROM Leave_report WHERE emp_code = ?";
+		Integer totalLeaveDays = jdbcTemplate.queryForObject(query, Integer.class,empCode);
+		if (totalLeaveDays != null) {
+			return totalLeaveDays;
+		} else {
+			return 0; 
+		}
+	}
+
+	public boolean insertTotalLeaveDays(int empCode, int totalLeaveDays) {
+		String updateQuery = "UPDATE Leave_report SET leave_Count = ? WHERE emp_code = ?";
+		int rowCount = jdbcTemplate.update(updateQuery, totalLeaveDays, empCode);
+
+		if (rowCount > 0) {
+			return true;
+		} else {	       
+			return false; 
+		}
+	}
+
+	public boolean updateLeaveStatus(int empCode, String status) {
+		String query = "UPDATE Leave_report SET status = ? WHERE emp_code = ?";
+		int rowCount = jdbcTemplate.update(query, status, empCode);
+		if (rowCount > 0) {
+			return true;
+		} else {	           
+			return false;
+		}
+	}
+
+	public List<CheckInsAndCheckOuts> getEmployeeCheckInOut(int empCode) {
+		String selectQuery = "SELECT emp_code, name, checkin_time, checkout_time FROM checkins_checkouts WHERE emp_code=?";
+		List<CheckInsAndCheckOuts> employees = jdbcTemplate.query(selectQuery,new CheckInOutHandler(),empCode);
+		return employees;
+	}
+
+	public int getTotalWorkingHours(int empCode) {
+		String sumQuery ="SELECT SUM(TIMESTAMPDIFF(MINUTE, checkin_time, checkout_time)) / 60 AS total_minutes FROM checkins_checkouts WHERE emp_code = ?";
+		int count = jdbcTemplate.queryForObject(sumQuery, Integer.class, empCode);
+		return count;			
+	}
+
+	public String getEmployeeName(int empCode) {
+		String getName = "SELECT username FROM Employee_details WHERE emp_code = ?";
+		return jdbcTemplate.queryForObject(getName, String.class, empCode);
+	}
+
+	public String getEmployeeEmail(int empCode) {
+		String getEmail = "SELECT useremail FROM Employee_details WHERE emp_code = ?";
+		return jdbcTemplate.queryForObject(getEmail, String.class, empCode);
+	}
+
+	public int countPermissionsPayroll(int empCode) {
+		String getPermission = "SELECT permission  FROM permission_count WHERE emp_code = ?";
+		return jdbcTemplate.queryForObject(getPermission, Integer.class, empCode);		  
+	}
+
+	public int countSickLeavePayroll(int empCode) {
+		String sickLeave = "SELECT SUM(DATEDIFF(to_date, from_date)) AS sick_leave_days FROM Leave_report WHERE emp_code = ? AND leave_type = 'sick'";
+		try {
+			return jdbcTemplate.queryForObject(sickLeave, Integer.class, empCode);	
+		}catch(Exception e) {
+			return 0;
+		}
+	}
+
+	public int countCasualLeavePayroll(int empCode) {
+		String casualLeave = "SELECT SUM(DATEDIFF(to_date, from_date)) AS casual_leave_days FROM Leave_report WHERE emp_code = ? AND leave_type = 'casual'";
+		try {
+			return jdbcTemplate.queryForObject(casualLeave, Integer.class, empCode);
+		}catch(Exception e) {
+			return 0;
+		}
+	}
+
+	public int getTotalCheckinCount(int empCode) {
+		String checkInCount = "SELECT COUNT(checkin_time) AS checkin_count FROM checkins_checkouts WHERE emp_code = ?";
+		return jdbcTemplate.queryForObject(checkInCount, Integer.class, empCode);		  		  	  		
+	}
+
+	public int getEmployeeSalary(int empCode) {
+		String getsalary = "SELECT salary FROM Employee_details WHERE emp_code = ?";
+		try {
+			return jdbcTemplate.queryForObject(getsalary, Integer.class, empCode);
+		}catch(Exception e) {
+			return -1;
+		}
+	}
+
+	public int insertOrUpdateLeavePermission(PayrollList payrollList) {
+		int affectedRows = 0;
+
+		try {
+			String checkQuery = "SELECT COUNT(*) FROM employee_payscale WHERE emp_code = ?";
+			int count = jdbcTemplate.queryForObject(checkQuery, Integer.class, payrollList.getEmpCode());
+
+			if (count > 0) {
+				String updateQuery = "UPDATE employee_payscale SET username = ?, useremail = ?, payroll_permission = ?, sick_leaveDays = ?, casual_leaveDays = ?, working_days = ?,working_hours= ?, salary = ? WHERE emp_code = ?";
+				affectedRows = jdbcTemplate.update(updateQuery, payrollList.getEmpName(), payrollList.getEmpEmail(),
+						payrollList.getPermissionCount(), payrollList.getSickLeaveDays(),
+						payrollList.getCasualLeaveDays(), payrollList.getTotalCheckinCount(),payrollList.getWorkingHours(),
+						payrollList.getSalary(), payrollList.getEmpCode());
+
+				if (affectedRows > 0) {
+					System.out.println("Data updated successfully.");
+				} else {
+					System.out.println("Data update failed.");
+				}
+			} else {
+				String insertQuery = "INSERT INTO employee_payscale (emp_code, username, useremail, " +
+						"payroll_permission, sick_leaveDays, casual_leaveDays, working_days,working_hours, salary) " +
+						"VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+				affectedRows = jdbcTemplate.update(insertQuery, payrollList.getEmpCode(), payrollList.getEmpName(),
+						payrollList.getEmpEmail(), payrollList.getPermissionCount(),
+						payrollList.getSickLeaveDays(), payrollList.getCasualLeaveDays(),
+						payrollList.getTotalCheckinCount(),payrollList.getWorkingHours(), payrollList.getSalary());
+
+				if (affectedRows > 0) {
+					System.out.println("Data inserted successfully.");
+				} else {
+					System.out.println("Data insertion failed.");
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+		}
+
+		return affectedRows;
+	}
 
 
 

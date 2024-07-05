@@ -188,7 +188,7 @@ select::-ms-expand {
         <ul class="navbar-nav ml-auto">
   
    <div>
-    <p style="color: white;margin-top:8%;bottom:0;">Welcome, <%= session.getAttribute("username") %></p>
+    <p style="color: white;margin-top:6.3%;bottom:0;">Welcome, <%= session.getAttribute("username") %></p>
 </div>
 
         <li class="nav-item">
@@ -206,19 +206,18 @@ select::-ms-expand {
   </nav>
 
 
-		<form action="Permission" method="post">
-			<div class="dropdown-container">
-			<input type="hidden" name="action" value="thisorthat" >
-            <select name="options" >
+	<form action="/switch" method="post">
+    <div class="dropdown-container">
+        <input type="hidden" name="action" value="thisorthat">
+        <select name="option">
+            <option value="None">Select an Option!</option>
+            <option value="permission">Permission</option>
+            <option value="Leave">Leave</option>
+        </select>
+        <button type="submit">OK</button>
+    </div>
+</form>
 
-                <option value="None">Select an Option!</option>
-                <option value="permission" >Permission</option>
-                <option value="Leave" >Leave</option>
-            </select>
-            <button >ok</button>
-        </div>
-			
-		</form>
 
 
 </body>

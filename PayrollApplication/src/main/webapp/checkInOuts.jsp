@@ -71,20 +71,26 @@ a.back-btn input[type="submit"] {
 	margin-left: 0.8%;
 	background-color: firebrick;
 }
+.contain{
+display:flex;
+}
 </style>
 </head>
 <body>
 
-<!-- 	<div class="container">
-		<form action="PayrollDeduction" method="get">
-			<input type="text" name="empcode" placeholder="Search EmpCode">
-			<input type="submit" value="Search">
-		</form>
- -->
-		<!-- <div class="back-btn">
-			<a href="AdminDashboard.jsp"> <input type="submit" value="Back">
-			</a>
-		</div> -->
+	<div class="container">
+	<div class="contain">
+	<div class="container1">
+		<form action="/search" method="post">
+			<input type="number" name="empcode" placeholder="Search EmpCode" required="required" >
+			<input type="submit" value="Search">		
+			</form>
+			</div>
+			<div class="container2">
+					<a href="adminDashboard.jsp">
+			<input type="submit" value="Back" style="margin-left:26%;background-color: firebrick;">
+		</a></div>
+</div>
 
 		<h2>Employee Check-Ins & Check-Outs</h2>
 
@@ -99,7 +105,7 @@ a.back-btn input[type="submit"] {
 			</thead>
 			<tbody>
 				<% 
-            List<CheckInsAndCheckOuts> checkInsAndCheckOuts = (List<CheckInsAndCheckOuts>) request.getAttribute("checkInsAndCheckOuts");
+            List<CheckInsAndCheckOuts> checkInsAndCheckOuts = (List<CheckInsAndCheckOuts>) session.getAttribute("checkInsAndCheckOuts");
             if (checkInsAndCheckOuts != null) {
                 for (CheckInsAndCheckOuts checkInOut : checkInsAndCheckOuts) { 
         %>

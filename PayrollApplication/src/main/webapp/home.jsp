@@ -363,7 +363,7 @@ if (session.getAttribute("username") == null) {
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="custom-dropdown-content">
-           <form action="UpdateAndDelete" class="a1" method="get">
+           <form action="/timeSheet" class="a1" method="post">
     <button type="submit" value="submit">Check Permission</button>            
 </form>
                  <form action="EmployeeLeave"  class="a1" method="get">
@@ -374,7 +374,7 @@ if (session.getAttribute("username") == null) {
         </div>   
         
          <div class="custom-dropdown">
-          <form action="PayrollCalculations" class="a1" method="post">
+          <form action="/timeSheet" class="a1" method="post">
               <button class="custom-dropbtn">Timesheet
                 <i class="fa fa-caret-down"></i>
             </button>
@@ -384,9 +384,7 @@ if (session.getAttribute("username") == null) {
 
     </a>
 </div>     
-    </nav>
-    
-    
+    </nav>    
     <div class="para">
         <p>Managing attendance and zpayroll efficiently is crucial for any organization to ensure accurate compensation
             and regulatory compliance. By leveraging advanced software solutions, companies can automate attendance

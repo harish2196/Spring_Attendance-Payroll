@@ -1,21 +1,19 @@
 create database payroll_Application;
 use payroll_Application;
 drop database payroll_Application;
+
 CREATE TABLE Employee_details (
   emp_code INT NOT NULL ,
   username VARCHAR(255),
   designation varchar(50),
-  useremail VARCHAR(255),
+  useremail VARCHAR(255) unique,
   userpassword VARCHAR(255),
-  usermobile VARCHAR(255),
+  usermobile VARCHAR(255) unique,
  image longblob,
  salary int,
   PRIMARY KEY (emp_code),
   UNIQUE (useremail) 
 );
-ALTER TABLE Employee_details
-ADD CONSTRAINT useremail UNIQUE (useremail);
-
 
 select * from Employee_details;
 CREATE TABLE checkins_checkouts(
@@ -48,11 +46,11 @@ CREATE TABLE Leave_report (
     to_date DATE NOT NULL,
     leave_type VARCHAR(255),
     leave_Count INT,
-     status VARCHAR(50) DEFAULT 'waiting', 
+     status VARCHAR(50) DEFAULT 'pending', 
     FOREIGN KEY (emp_code) REFERENCES Employee_details(emp_code)
 );
 select * from Leave_report;
-
+drop table Leave_report;
 CREATE TABLE admin_report (
   emp_code INT NOT NULL,
   name VARCHAR(255),
@@ -61,3 +59,24 @@ CREATE TABLE admin_report (
 );
 select * from admin_report;
 truncate admin_report;
+
+CREATE TABLE employee_payscale(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_code INT NOT NULL,
+    username VARCHAR(255)  DEFAULT 'none',
+    useremail VARCHAR(255)  DEFAULT 'none',
+    payroll_permission VARCHAR(50) DEFAULT 'none',
+    sick_leaveDays INT NOT NULL default 0,
+    casual_leaveDays INT NOT NULL default 0,
+    working_days INT NOT NULL default 0,
+    working_hours INT NOT NULL default 0,
+     salary INT NOT NULL default 0,
+     salary_status VARCHAR(20) DEFAULT 'pending',
+    gross_pay INT NOT NULL default 0,
+    Pf INT NOT NULL default 0,
+    netpay INT NOT NULL default 0,
+    FOREIGN KEY (emp_code) REFERENCES Employee_details(emp_code)
+);
+
+select * from employee_payscale;
+drop table employee_payscale;

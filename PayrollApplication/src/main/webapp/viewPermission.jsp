@@ -95,7 +95,7 @@
                 <input type="text" id="name" name="name" pattern="[A-Za-z]{2,20}" required>
 
                 <label for="date">Date:</label>
-                <input type="date" id="date" name="date" required min="2024-06-14" max="2024-06-30">
+                <input type="date" id="date" name="date" required min="2024-07-08" max="2024-07-31">
                 
                 <label for="start_time">Start Time:</label>
                 <input type="time" id="start_time" name="start_time" required>

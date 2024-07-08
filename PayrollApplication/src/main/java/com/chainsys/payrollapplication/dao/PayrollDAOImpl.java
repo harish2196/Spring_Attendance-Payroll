@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.chainsys.payrollapplication.mapper.AdminReportMapper;
 import com.chainsys.payrollapplication.mapper.CheckInOutHandler;
+import com.chainsys.payrollapplication.mapper.EmployeePayscaleMapper;
 import com.chainsys.payrollapplication.mapper.GetEmpCodeMapper;
 import com.chainsys.payrollapplication.mapper.LeaveInfoMapper;
 import com.chainsys.payrollapplication.mapper.LoginMapper;
@@ -20,6 +21,7 @@ import com.chainsys.payrollapplication.mapper.PayrollMapper;
 import com.chainsys.payrollapplication.mapper.PermissionMapper;
 import com.chainsys.payrollapplication.model.AdminReport;
 import com.chainsys.payrollapplication.model.CheckInsAndCheckOuts;
+import com.chainsys.payrollapplication.model.EmployeePayScale;
 import com.chainsys.payrollapplication.model.Employees;
 import com.chainsys.payrollapplication.model.LeaveReport;
 import com.chainsys.payrollapplication.model.PayrollList;
@@ -280,6 +282,16 @@ public class PayrollDAOImpl implements PayrollDAO {
 			return -1;
 		}
 	}
+	
+	public int getEmployeePayscaleSalary(int empCode) {
+		String getsalary = "SELECT salary FROM employee_payscale WHERE emp_code = ?";
+		try {
+			return jdbcTemplate.queryForObject(getsalary, Integer.class, empCode);
+		}catch(Exception e) {
+			return -1;
+		}
+	}
+	
 
 	public int insertOrUpdateLeavePermission(PayrollList payrollList) {
 		int affectedRows = 0;
@@ -301,9 +313,7 @@ public class PayrollDAOImpl implements PayrollDAO {
 					System.out.println("Data update failed.");
 				}
 			} else {
-				String insertQuery = "INSERT INTO employee_payscale (emp_code, username, useremail, " +
-						"payroll_permission, sick_leaveDays, casual_leaveDays, working_days,working_hours, salary) " +
-						"VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+				String insertQuery = "INSERT INTO employee_payscale " + "(emp_code, username, useremail, payroll_permission, " + "sick_leaveDays, casual_leaveDays, working_days, " +"working_hours, salary, salary_status) " +"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')";			
 				affectedRows = jdbcTemplate.update(insertQuery, payrollList.getEmpCode(), payrollList.getEmpName(),
 						payrollList.getEmpEmail(), payrollList.getPermissionCount(),
 						payrollList.getSickLeaveDays(), payrollList.getCasualLeaveDays(),
@@ -322,8 +332,30 @@ public class PayrollDAOImpl implements PayrollDAO {
 		return affectedRows;
 	}
 
+	public List<EmployeePayScale> getAllEmployeePayScales() {
+		String getEmpPayScale = "SELECT id, emp_code, username, useremail, payroll_permission,sick_leaveDays, casual_leaveDays, working_days, working_hours,salary,salary_status, gross_pay,Pf, netpay FROM employee_payscale";
+		return jdbcTemplate.query(getEmpPayScale, new EmployeePayscaleMapper());
+	}
 
+	public void payrollPays(EmployeePayScale employeePayScale, int empCode) {
+		String updateQuery = "UPDATE employee_payscale SET gross_pay=?, Pf=?, netpay=? WHERE emp_code=?";
+		int rowCount = jdbcTemplate.update(updateQuery,employeePayScale.getGrossPay(),employeePayScale.getPf(),employeePayScale.getNetPay(),empCode);
+		if (rowCount > 0) {
+			System.out.println("Data updated successfully.");
+		} else {
+			System.out.println("Update failed for empCode: " + empCode);
+		}
+	}
 
+	public List<PermissionCount> getPermissionStatus(int empCode){
+		String getAllQuery = "SELECT emp_code,name, date, start_time, end_time, status, permission FROM permission_count WHERE emp_code=?";
+		return jdbcTemplate.query(getAllQuery, new PermissionMapper(),empCode);
+	}
+
+	public List<LeaveReport> getAllLeaveStatus(int empCode) {
+		String getAllQuery = "SELECT emp_code, name, from_date, to_date, leave_type, leave_Count, status FROM Leave_report WHERE emp_code=?";
+		return jdbcTemplate.query(getAllQuery, new LeaveInfoMapper(),empCode);
+	}
 
 }
 

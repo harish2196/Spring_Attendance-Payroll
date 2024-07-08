@@ -217,7 +217,7 @@
             <div class="card">
                 <i class="fas fa-book"></i>
                 <h3>Payroll</h3>
-                  <form action="PayrollDeduction" class="a1" method="post">
+                  <form action="/payscale" class="a1" method="post">
     <button style="font-size: 17px;font-weight: bold;color:black;" type="submit" value="submit">View Details</button>            
 </form>
             </div>      

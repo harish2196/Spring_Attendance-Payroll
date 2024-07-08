@@ -53,7 +53,7 @@
                         <th>Permission Count</th>
                         <th>Sick Leave</th>
                         <th>Casual Leave</th>
-                        <th>Check-In Count</th>
+                        <th>Working Days</th>
                         <th>Working Hours</th>
                         <th>Allocate Salary</th>
                     </tr>

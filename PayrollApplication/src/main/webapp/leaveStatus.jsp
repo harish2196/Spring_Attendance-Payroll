@@ -205,7 +205,7 @@
  --%></div>
 
         <li class="nav-item">
-            <a class="nav-link" href="adminDashboard.jsp">Home</a>
+            <a class="nav-link" href="home.jsp">Home</a>
           </li>                   
           <li class="nav-item">
             <a class="nav-link" href="JoinUs.jsp">Join Us</a>
@@ -213,24 +213,14 @@
           <li class="nav-item">
             <a class="nav-link" href="contact.jsp">Contact</a>
           </li>
-           <li class="nav-item">
-      <form action="/adminCheckOut" class="logout" method="get">
-							<a href="adminDashboard.jsp"> <input type="submit"
-								value="Logout">
-							</a>
-						</form>
-
-          </li>
+     
         </ul>
       </div>
     </div>
   </nav>
   
     <h1 style="margin-left:35%;">Employee Leave Details</h1>
-      <form action="SearchNames" method="get">     
-           <input style="margin-left:39%;margin-top:2%;margin-bottom:1%;" type="text" name="empcode" placeholder="Search EmpCode">      
-        <input type="submit" value="Search">
-    </form>
+    
    
         <table>
             <tr>
@@ -241,7 +231,7 @@
                 <th>Leave Type</th>
                 <th>Leave Count</th>
                 <th>Status</th>
-                <th>Actions</th>
+        
                 <th></th>
             </tr>
             <% 
@@ -259,22 +249,7 @@
                 <td><%= leave.getLeaveType() %></td>
                 <td><%= leave.getLeaveCount() %></td>
                 <td><%= leave.getLeaveStatus() %></td>
-                <td>
-                    <form action="/leaveCount" method="post">
-                        <input type="hidden" name="empCode" value="<%= leave.getEmpCode() %>">
-                         <input type="hidden" name="fromDate" value="<%= leave.getFromdate() %>">
-                        <input type="hidden" name="action" value="Accepted">
-                        <button class="accept-button" type="submit">Accept</button>
-                    </form>
-                    <td>
-                    <form action="/leaveCount" method="post">
-                        <input type="hidden" name="empCode" value="<%= leave.getEmpCode() %>">
-                         <input type="hidden" name="fromDate" value="<%= leave.getFromdate() %>">
-                        <input type="hidden" name="action" value="Rejected">
-                       
-                       <button class="reject-button" type="submit">Reject</button>
-                    </form>
-                </td>
+               
             </tr>
             <% 
                 }

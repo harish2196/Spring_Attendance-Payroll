@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.List"%>
+<%@ page import="java.util.Base64"%>
+
 <%@ page import="com.chainsys.payrollapplication.model.Employees"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -112,7 +114,7 @@ tr:hover {
 					</li>
 					<li class="nav-item">
 						<form action="/adminCheckOut" class="logout" method="get">
-							<a href="adminDashboard.jsp"> <input type="submit"
+							<a href="login.jsp"> <input type="submit"
 								value="Logout">
 							</a>
 						</form>
@@ -133,7 +135,7 @@ tr:hover {
 					<th>Designation</th>
 					<th>Email</th>
 					<th>Mobile</th>
-					<!-- <th>Profile</th> -->
+					<!-- <th>Profile</th>  -->
 					<th>Salary</th>
 					<th>Actions</th>
 				</tr>
@@ -143,6 +145,8 @@ tr:hover {
             List<Employees> employeeList = (List<Employees>) request.getAttribute("employee");
             if (employeeList != null && !employeeList.isEmpty()) {
                 for (Employees employee : employeeList) {
+                	
+                	byte[] image=employee.getImageData();
             %>
 				<tr>
 					<td><%= employee.getEmpCode() %></td>					
@@ -150,8 +154,8 @@ tr:hover {
 					<td><%= employee.getDesignation() %></td>
 					<td><%= employee.getUserEmail() %></td>
 					<td><%= employee.getUserMobile() %></td>
-				<%-- 	<td><%= employee.getImageData() %></td> --%>
-					<td><%= employee.getSalary() %></td>
+<%-- 					<td><img src="data:image/jpeg;base64,<%= Base64.getEncoder().encodeToString(image) %>"></td> 
+ --%>					<td><%= employee.getSalary() %></td>
 					<td><a class="btn btn-primary"
 						href="updatePage.jsp?id=<%= employee.getEmpCode() %>&name=<%= employee.getUserName()%>&designation=<%= employee.getDesignation() %>&email=<%= employee.getUserEmail() %>&mobile=<%= employee.getUserMobile() %>&salary=<%= employee.getSalary() %>">Update</a>
 						<form action="/delete" method="post"

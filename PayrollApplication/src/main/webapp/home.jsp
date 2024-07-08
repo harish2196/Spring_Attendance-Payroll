@@ -363,10 +363,10 @@ if (session.getAttribute("username") == null) {
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="custom-dropdown-content">
-           <form action="/timeSheet" class="a1" method="post">
+           <form action="/viewPermission" class="a1" method="post">
     <button type="submit" value="submit">Check Permission</button>            
 </form>
-                 <form action="EmployeeLeave"  class="a1" method="get">
+                 <form action="/viewLeave"  class="a1" method="post">
                <button type="submit" value="submit">Check Leave</button> 
                 </form>
                 

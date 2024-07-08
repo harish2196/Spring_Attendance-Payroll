@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.chainsys.payrollapplication.model.AdminReport;
 import com.chainsys.payrollapplication.model.CheckInsAndCheckOuts;
+import com.chainsys.payrollapplication.model.EmployeePayScale;
 import com.chainsys.payrollapplication.model.Employees;
 import com.chainsys.payrollapplication.model.LeaveReport;
 import com.chainsys.payrollapplication.model.PayrollList;
@@ -46,4 +47,9 @@ public interface PayrollDAO {
 	public int getTotalCheckinCount(int empCode);
 	public int getEmployeeSalary(int empCode);
 	public int insertOrUpdateLeavePermission(PayrollList payrollList);
+	public List<EmployeePayScale> getAllEmployeePayScales();
+	 public void payrollPays(EmployeePayScale employeePayScale, int empCode);
+	 public List<PermissionCount> getPermissionStatus(int EmpCode);
+	 public List<LeaveReport> getAllLeaveStatus(int empCode);
+		public int getEmployeePayscaleSalary(int empCode); 
 }

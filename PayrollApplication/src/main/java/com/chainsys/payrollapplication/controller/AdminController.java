@@ -7,6 +7,7 @@ import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.chainsys.payrollapplication.dao.MailRespond;
 import com.chainsys.payrollapplication.dao.PayrollDAO;
+import com.chainsys.payrollapplication.dao.Validations;
 import com.chainsys.payrollapplication.model.AdminReport;
 import com.chainsys.payrollapplication.model.CheckInsAndCheckOuts;
 import com.chainsys.payrollapplication.model.EmployeePayScale;
@@ -26,12 +28,13 @@ import com.chainsys.payrollapplication.model.PermissionCount;
 import jakarta.servlet.http.HttpSession;
 
 
-@Component
+@Controller
 public class AdminController {
 
 	@Autowired
 	PayrollDAO payrollDAO;
 	
+
 
 	@PostMapping("/adminReport")
 	public String adminReport(
@@ -40,6 +43,10 @@ public class AdminController {
 			HttpSession session,
 			RedirectAttributes redirectAttributes) {
 		AdminReport adminReport=new AdminReport();
+		Validations validations=new  Validations();
+		validations.validateString(name);
+		validations.isSpecialChar(comments);
+		
 		adminReport.setName(name);
 		adminReport.setText(comments);
 
@@ -55,7 +62,6 @@ public class AdminController {
 			@RequestParam("password") String password,
 			RedirectAttributes redirectAttributes,
 			HttpSession session) {
-
 		boolean success = false;
 		int empCode = 0;
 
@@ -121,7 +127,13 @@ public class AdminController {
 			@RequestParam("contact") String phoneNumber,
 			@RequestParam("salary") int salary,
 			Model model) {
-
+		Validations validations=new  Validations();
+		validations.validateString(name);
+		validations.validateString(designation);
+		validations.isEmailChecker(email);
+		validations.isPhoneNumber(phoneNumber);
+		validations.isNumerics(salary);
+		
 		Employees employee = new Employees();
 		employee.setEmpCode(id);
 		employee.setUserName(name);
@@ -150,6 +162,13 @@ public class AdminController {
 	public String adminReport(Model model) {
 		List<AdminReport> adminReport = payrollDAO.getComments(); 
 
+		model.addAttribute("adminReport", adminReport); 
+		return "comment.jsp"; 
+	}
+
+	@PostMapping("/reportSearch")  
+	public String getEmployeeReports(@RequestParam("empcode") int empCode,Model model) {
+		List<AdminReport> adminReport= payrollDAO.getReport(empCode);	
 		model.addAttribute("adminReport", adminReport); 
 		return "comment.jsp"; 
 	}
@@ -271,6 +290,7 @@ public class AdminController {
 			RedirectAttributes redirectAttributes,HttpSession session,
 			Model model) {
 
+		payrollDAO.salaryCredited(empCode);		
 		int totalCheckinCount, sickLeaveDays, casualLeaveDays, permissionCount,allocateSalary;
 		String name, email;
 
@@ -292,35 +312,46 @@ public class AdminController {
 		employeePayScale.setCasualLeaveDays(casualLeaveDays);
 		employeePayScale.setSalary(allocateSalary);
 		employeePayScale.setPayrollPermission(String.valueOf(permissionCount));
-
+		double sickLeaveSalary,halfDayDeduction = 0,fullDayDeduction = 0;
 		double salary = allocateSalary;
-	
 		double dailySalary = salary / 22;
 		double checkinsSalary = dailySalary * totalCheckinCount;
 
 		if (permissionCount > 2) {
-		    double deduction = (permissionCount - 2) * (checkinsSalary / 2);
-		    checkinsSalary -= deduction;
+			halfDayDeduction = (permissionCount - 2) * (dailySalary / 2);
+			checkinsSalary -= halfDayDeduction;
+		}		
+		employeePayScale.setPermissionPayscale(halfDayDeduction);
+
+
+		if(sickLeaveDays >= 2 && sickLeaveDays < 3) {
+			checkinsSalary=checkinsSalary;
+			employeePayScale.setSickLeavePayscale(0.0);
+
+		}else if (sickLeaveDays >= 3 ) {
+			fullDayDeduction =(sickLeaveDays-2) * (dailySalary);
+			checkinsSalary -= fullDayDeduction;
+			employeePayScale.setSickLeavePayscale(fullDayDeduction);
 		}
 
-		if (sickLeaveDays > 2) {
-		    int extraSickLeaveDays = sickLeaveDays - 2;
-		    double sickLeaveDeduction = extraSickLeaveDays * dailySalary;
-		    salary -= sickLeaveDeduction;
+
+
+		if (casualLeaveDays >= 1 && casualLeaveDays < 2 ) {
+			checkinsSalary=checkinsSalary;
+			employeePayScale.setCasualLeavePayscale(0.0);
+		}else if(casualLeaveDays >= 2) {
+			fullDayDeduction = (casualLeaveDays - 1) * (dailySalary);
+			checkinsSalary -= fullDayDeduction;
+			employeePayScale.setCasualLeavePayscale(fullDayDeduction);
 		}
 
-		if (casualLeaveDays > 1) {
-		    int extraCasualLeaveDays = casualLeaveDays - 1;
-		    double casualLeaveDeduction = extraCasualLeaveDays * dailySalary;
-		    salary -= casualLeaveDeduction;
-		}
 
-		employeePayScale.setSalary((int)salary);
+		employeePayScale.setSalary((int)salary);		
 		employeePayScale.setGrossPay(checkinsSalary);
-		double pfDeduction = salary * 0.12;
+		double pfDeduction = checkinsSalary * 0.12;
 		employeePayScale.setPf((int) pfDeduction);
-		double netPay = salary - pfDeduction;
-		employeePayScale.setNetPay((int) salary);
+		double netPay = checkinsSalary - pfDeduction;
+		employeePayScale.setNetPay((int) netPay);
 
 		payrollDAO.payrollPays(employeePayScale, empCode);
 
@@ -387,6 +418,32 @@ public class AdminController {
 		return "employeePayscale.jsp";
 	}
 
+	@PostMapping("/employeeSearch")  
+	public String getAllEmployees(@RequestParam("empcode") int empCode,HttpSession session,Model model) {
+		List<Employees> employee= payrollDAO.getEmployeeDeatils(empCode);	
+		model.addAttribute("employee", employee); 
+		return "displayEmployees.jsp"; 
+	}
 
+	@PostMapping("/searchPayscale")
+	public String searchEmployeePayscale(@RequestParam("empcode") int empCode,Model model) {
+		List<EmployeePayScale> employeePayScale = payrollDAO.searchEmployeePayScales(empCode);
+		model.addAttribute("employeePayScale", employeePayScale);
+		return "employeePayscale.jsp";
+	}
+
+	@PostMapping("/searchPermission")
+	public String searchEmployeePermission(@RequestParam("empcode") int empCode,Model model) {
+		ArrayList<PermissionCount> permissionCount = new ArrayList<>(payrollDAO.searchPermission(empCode));
+		model.addAttribute("permissionCount", permissionCount);
+		return "permissionInfo.jsp"; 
+	}
+
+	@PostMapping("/searchLeave")
+	public String searchEmployeeLeave(@RequestParam("empcode") int empCode,Model model) {
+		ArrayList<LeaveReport> leaveReport = new ArrayList<>(payrollDAO.searchLeaveReports(empCode));
+		model.addAttribute("leaveReport", leaveReport);
+		return "leaveInfo.jsp"; 
+	}
 
 }

@@ -38,6 +38,7 @@ public class EmployeeController {
 
 	@Autowired
 	PayrollDAO payrollDAO;
+	
 
 	@RequestMapping("/reg")
 	public String showRegistrationForm() {
@@ -64,7 +65,7 @@ public class EmployeeController {
 			@RequestParam("image") MultipartFile imageFile,
 			RedirectAttributes redirectAttributes,
 			Model model) {	
-
+		
 		byte[] image = null;
 		if (!imageFile.isEmpty()) {
 			try {
@@ -76,11 +77,17 @@ public class EmployeeController {
 		}
 
 		if (payrollDAO.isUserExist(email, contact)) {
-
 			model.addAttribute("message", "User already exists");
 			return "registration.jsp";
 		}
-
+		Validations validations=new Validations();
+		validations.validateString(name);
+		validations.validateString(role);
+		validations.isEmailChecker(email);
+		validations.isPhoneNumber(contact);
+		validations.isPassword(password);
+		
+		
 		Employees employees = new Employees();
 		employees.setUserName(name);
 		employees.setDesignation(role);
@@ -156,6 +163,9 @@ public class EmployeeController {
 			@RequestParam("end_time") String endTime,
 			HttpSession session,
 			RedirectAttributes redirectAttributes) {
+		Validations validations=new Validations();
+		
+		validations.validateString(name);
 		PermissionCount permissionCount = new PermissionCount();
 		permissionCount.setName(name);
 		permissionCount.setDate(date);
@@ -176,6 +186,8 @@ public class EmployeeController {
 			@RequestParam("leaveType") String leaveType,
 			HttpSession session,
 			RedirectAttributes redirectAttributes) {
+		Validations validations=new Validations();
+		validations.validateString(name);
 		LeaveReport leaveReport=new LeaveReport();
 		leaveReport.setName(name);
 		leaveReport.setFromdate(fromDate);

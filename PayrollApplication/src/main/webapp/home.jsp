@@ -316,7 +316,7 @@ if (session.getAttribute("username") == null) {
             <a class="nav-link" href="Home.jsp">Home</a>
           </li>                   
           <li class="nav-item">
-            <a class="nav-link" href="JoinUs.jsp">Join Us</a>
+            <a class="nav-link" href="joinUs.jsp">Join Us</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="contact.jsp">Contact</a>

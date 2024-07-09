@@ -45,11 +45,18 @@ public interface PayrollDAO {
 	public int countSickLeavePayroll(int empCode);
 	public int countCasualLeavePayroll(int empCode);
 	public int getTotalCheckinCount(int empCode);
-	public int getEmployeeSalary(int empCode);
+	public int getEmployeeSalary(int empCode);			
 	public int insertOrUpdateLeavePermission(PayrollList payrollList);
 	public List<EmployeePayScale> getAllEmployeePayScales();
-	 public void payrollPays(EmployeePayScale employeePayScale, int empCode);
-	 public List<PermissionCount> getPermissionStatus(int EmpCode);
-	 public List<LeaveReport> getAllLeaveStatus(int empCode);
-		public int getEmployeePayscaleSalary(int empCode); 
+	public void payrollPays(EmployeePayScale employeePayScale, int empCode);
+	public List<PermissionCount> getPermissionStatus(int EmpCode);
+	public List<LeaveReport> getAllLeaveStatus(int empCode);
+	public int getEmployeePayscaleSalary(int empCode); 
+	public void salaryCredited(int empCode); 
+	public List<Employees> getEmployeeDeatils(int empCode);
+	public List<AdminReport> getReport(int empCode);
+	public List<EmployeePayScale> searchEmployeePayScales(int empCode);
+	public List<PermissionCount> searchPermission(int empCode);
+	public List<LeaveReport> searchLeaveReports(int empCode);
+	public int insertOrUpdateLeavePermission(PayrollList payrollList,int empCode); 
 }

@@ -7,9 +7,39 @@ public class EmployeePayScale {
 	    public String username;
 	    public String userEmail;
 	    public String payrollPermission;
-	    public int sickLeaveDays;
+		public int sickLeaveDays;
 	    public int casualLeaveDays;
 	    public int workingDays;
+	    public double getPermissionPayscale() {
+			return permissionPayscale;
+		}
+
+		public void setPermissionPayscale(double permissionPayscale) {
+			this.permissionPayscale = permissionPayscale;
+		}
+
+		public double getSickLeavePayscale() {
+			return sickLeavePayscale;
+		}
+
+		public void setSickLeavePayscale(double sickLeavePayscale) {
+			this.sickLeavePayscale = sickLeavePayscale;
+		}
+
+		public double getCasualLeavePayscale() {
+			return casualLeavePayscale;
+		}
+
+		public void setCasualLeavePayscale(double casualLeavePayscale) {
+			this.casualLeavePayscale = casualLeavePayscale;
+		}
+
+
+
+		public double permissionPayscale;
+	    public double sickLeavePayscale;
+	    public double casualLeavePayscale;
+	    
 	    public String getSalaryStatus() {
 			return salaryStatus;
 		}

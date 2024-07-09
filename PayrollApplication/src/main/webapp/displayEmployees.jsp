@@ -86,6 +86,19 @@ tr:hover {
 	color: lightgray;
 	margin-top: 10%;
 }
+.btn-custom {
+    background-color: #4F7942; 
+    color: white;
+    border: none;
+    padding: 3.4px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-custom:hover {
+    background-color: #808000; 
+}
+
 </style>
 </head>
 <body>
@@ -108,7 +121,7 @@ tr:hover {
 					</li>
 					<li class="nav-item"><a class="nav-link"
 						href="adminDashboard.jsp">Home</a></li>
-					<li class="nav-item"><a class="nav-link" href="JoinUs.jsp">Join
+					<li class="nav-item"><a class="nav-link" href="joinUs.jsp">Join
 							Us</a></li>
 					<li class="nav-item"><a class="nav-link" href="Contact.jsp">Contact</a>
 					</li>
@@ -127,6 +140,12 @@ tr:hover {
 	<div class="container" style="margin-top: 20px;">
 		<h1 style="text-align: center; margin-bottom: 20px;">Employee
 			Personal Details</h1>
+			
+			  <form action="/employeeSearch" method="post">  
+         <input style="margin-left:38.5%;margin-bottom:2%" type="text" name="empcode" placeholder="Search EmpCode">      
+      <input type="submit" value="Search" class="btn-custom">
+    </form>
+			
 		<table class="table">
 			<thead class="thead-dark">
 				<tr>

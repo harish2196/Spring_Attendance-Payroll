@@ -201,18 +201,18 @@
             <a class="nav-link" href="adminDashboard.jsp">Home</a>
           </li>                   
           <li class="nav-item">
-            <a class="nav-link" href="JoinUs.jsp">Join Us</a>
+            <a class="nav-link" href="joinUs.jsp">Join Us</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="contact.jsp">Contact</a>
           </li>
-           <li class="nav-item">
-            <form action="/adminCheckOut" class="logout" method="get">
+     <!--   <li class="nav-item">
+            <form action="/adminCheckOut"  method="get">
 							<a href="adminDashboard.jsp"> <input type="submit"
 								value="Logout">
 							</a>
 						</form>
-          </li>
+          </li>  -->
         </ul>
       </div>
     </div>
@@ -223,7 +223,7 @@
  
     <h1>Employee Permission Details</h1>
     
-    <form action="SearchNames" method="post">  
+    <form action="/searchPermission" method="post">  
          <input style="margin-left:40%;margin-top:0.3%;margin-bottom:1%" type="text" name="empcode" placeholder="Search EmpCode">      
         <input type="submit" value="Search">
     </form>

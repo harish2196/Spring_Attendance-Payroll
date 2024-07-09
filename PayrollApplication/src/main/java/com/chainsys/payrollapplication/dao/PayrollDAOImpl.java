@@ -148,7 +148,6 @@ public class PayrollDAOImpl implements PayrollDAO {
 	public void deleteEmployeeById(int id) {
 		String deleteQuery = "DELETE FROM Employee_details WHERE emp_code=?";
 		int rowsAffected = jdbcTemplate.update(deleteQuery, id);
-		System.out.println("Rows Affected by delete operation: " + rowsAffected);
 	} 
 
 	public List<PermissionCount> getPermissionInfo(){
@@ -248,7 +247,11 @@ public class PayrollDAOImpl implements PayrollDAO {
 
 	public int countPermissionsPayroll(int empCode) {
 		String getPermission = "SELECT permission  FROM permission_count WHERE emp_code = ?";
-		return jdbcTemplate.queryForObject(getPermission, Integer.class, empCode);		  
+		try {
+			return jdbcTemplate.queryForObject(getPermission, Integer.class, empCode);		  
+		}catch(Exception e) {
+			return 0;
+		}
 	}
 
 	public int countSickLeavePayroll(int empCode) {
@@ -282,7 +285,7 @@ public class PayrollDAOImpl implements PayrollDAO {
 			return -1;
 		}
 	}
-	
+
 	public int getEmployeePayscaleSalary(int empCode) {
 		String getsalary = "SELECT salary FROM employee_payscale WHERE emp_code = ?";
 		try {
@@ -291,7 +294,7 @@ public class PayrollDAOImpl implements PayrollDAO {
 			return -1;
 		}
 	}
-	
+
 
 	public int insertOrUpdateLeavePermission(PayrollList payrollList) {
 		int affectedRows = 0;
@@ -337,14 +340,14 @@ public class PayrollDAOImpl implements PayrollDAO {
 		return jdbcTemplate.query(getEmpPayScale, new EmployeePayscaleMapper());
 	}
 
+	public List<EmployeePayScale> searchEmployeePayScales(int empCode) {
+		String getEmpPayScale = "SELECT id, emp_code, username, useremail, payroll_permission,sick_leaveDays, casual_leaveDays, working_days, working_hours,salary,salary_status, gross_pay,Pf, netpay FROM employee_payscale WHERE emp_code=?";
+		return jdbcTemplate.query(getEmpPayScale, new EmployeePayscaleMapper(),empCode);
+	}
+
 	public void payrollPays(EmployeePayScale employeePayScale, int empCode) {
 		String updateQuery = "UPDATE employee_payscale SET gross_pay=?, Pf=?, netpay=? WHERE emp_code=?";
 		int rowCount = jdbcTemplate.update(updateQuery,employeePayScale.getGrossPay(),employeePayScale.getPf(),employeePayScale.getNetPay(),empCode);
-		if (rowCount > 0) {
-			System.out.println("Data updated successfully.");
-		} else {
-			System.out.println("Update failed for empCode: " + empCode);
-		}
 	}
 
 	public List<PermissionCount> getPermissionStatus(int empCode){
@@ -357,6 +360,37 @@ public class PayrollDAOImpl implements PayrollDAO {
 		return jdbcTemplate.query(getAllQuery, new LeaveInfoMapper(),empCode);
 	}
 
+	public void salaryCredited(int empCode) {
+		String updateQuery = "UPDATE employee_payscale SET salary_status='Credited' WHERE emp_code=?";
+		int rowCount = jdbcTemplate.update(updateQuery,empCode);
+	}
+
+
+	public List<Employees> getEmployeeDeatils(int empCode) {
+		String getAllQuery = "SELECT emp_code,username,designation,useremail,userpassword,usermobile,image,salary FROM Employee_details WHERE emp_code=?";
+		return jdbcTemplate.query(getAllQuery, new PayrollMapper(), empCode);	
+	}
+
+	public List<AdminReport> getReport(int empCode) {
+		String getAllQuery = "SELECT emp_code, name, report_text FROM admin_report WHERE emp_code=?";
+		return jdbcTemplate.query(getAllQuery, new AdminReportMapper(),empCode);
+	}
+
+	public List<PermissionCount> searchPermission(int empCode){
+		String getAllQuery = "SELECT emp_code, name, date, start_time, end_time, status, permission FROM permission_count  WHERE emp_code=?";
+		return jdbcTemplate.query(getAllQuery, new PermissionMapper(),empCode);
+	}
+
+	public List<LeaveReport> searchLeaveReports(int empCode) {
+		String getAllQuery = "SELECT emp_code, name, from_date, to_date, leave_type, leave_Count, status FROM Leave_report WHERE emp_code=? ";
+		return jdbcTemplate.query(getAllQuery, new LeaveInfoMapper(),empCode);
+	}
+
+	@Override
+	public int insertOrUpdateLeavePermission(PayrollList payrollList, int empCode) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
 
 

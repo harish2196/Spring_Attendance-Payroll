@@ -57,15 +57,14 @@
         <h3 style="margin-left: 32%;color: darkmagenta;font-weight: bolder;">Report Form</h3>
             <form action="/adminReport" method="post">
             <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" class="form-control" name="name" id="name" placeholder="Name...">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Name..." pattern="[A-Za-z]{2,20}" >
             </div>
             <div class="form-group">
                 <label for="comments">Your comments</label>
-                <textarea class="form-control" name="comments" id="comments" rows="4" placeholder="Write your comments here..."></textarea>
+                <textarea class="form-control" name="comments" id="comments" rows="4" placeholder="Write your comments here..." pattern="[a-zA-Z0-9\s]*" ></textarea>
             </div>
             <div class="btn">
-        
                 <div class="btn1">
             <button style="margin-left: 159%;" type="submit" class="btn btn-primary">Submit</button>
     

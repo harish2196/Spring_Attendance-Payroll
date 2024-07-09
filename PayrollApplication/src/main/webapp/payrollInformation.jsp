@@ -143,6 +143,19 @@
             <td><%= employeePayScale.getCasualLeaveDays() %></td>
         </tr>
         <tr>
+    <td>Permission Deduction</td>
+    <td><%= String.format("%.2f", employeePayScale.getPermissionPayscale()) %></td>
+</tr>
+<tr>
+    <td>Sick Deduction</td>
+    <td><%= String.format("%.2f", employeePayScale.getSickLeavePayscale()) %></td>
+</tr>
+<tr>
+    <td>Casual Deduction</td>
+    <td><%= String.format("%.2f", employeePayScale.getCasualLeavePayscale()) %></td>
+</tr>
+
+        <tr>
             <td>Gross Pay</td>
             <td><%= grossSalary %></td>
         </tr>
@@ -151,7 +164,7 @@
             <td><%= String.format("%.2f", pfDeduction) %></td>
         </tr>
         <tr>
-            <td>NetPay</td>
+            <td>Net Pay</td>
             <td><%= String.format("%.2f", netPay) %></td>
         </tr>
      

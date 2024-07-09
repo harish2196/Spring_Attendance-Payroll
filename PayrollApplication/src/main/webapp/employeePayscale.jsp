@@ -162,7 +162,14 @@
      margin-top:10%;
    
 }
+.form-group{
+margin-left:38%;
+}
 
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
 
     </style>
 
@@ -185,7 +192,7 @@
             <a class="nav-link" href="adminDashboard.jsp">Home</a>
           </li>                   
           <li class="nav-item">
-            <a class="nav-link" href="JoinUs.jsp">Join Us</a>
+            <a class="nav-link" href="joinUs.jsp">Join Us</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="contact.jsp">Contact</a>
@@ -203,7 +210,14 @@
     </div>
   </nav>
   <body>
-    <h2 style="margin-left:38%;margin-top:2%;">Employee Pay Scales</h2>
+    <h2 style="margin-left:38%;margin-top:2%;">Employee PayScales</h2>
+    <form action="/searchPayscale" method="post" class="form-inline">
+    <div class="form-group">
+        <input type="text" name="empcode" class="form-control" placeholder="Search EmpCode">
+    </div>
+    <button type="submit" class="btn btn-primary ml-2">Search</button>
+</form>
+    
     <table border="1">
         <tr>
             <th>Employee Code</th>

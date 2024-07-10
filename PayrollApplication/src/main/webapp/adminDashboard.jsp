@@ -1,3 +1,19 @@
+<%
+
+if(session == null){
+	response.sendRedirect("adminDashboard.jsp");
+}
+
+response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); 
+response.setHeader("Pragma", "no-cache"); 
+response.setHeader("Expires", "0");
+
+if (session.getAttribute("username") == null) {
+    response.sendRedirect("adminLogin.jsp");
+}
+%>
+
+
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
@@ -27,9 +43,11 @@
         }
 
         .sidebar img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+            width: 190px;
+            height: 45px;
+         margin-top:10%;
+         margin-bottom:0;
+         margin-left:10%;
             margin-bottom: 20px;
         }
 
@@ -82,8 +100,8 @@
         }
 
         .header img {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             margin-right: 10px;
         }
@@ -171,12 +189,15 @@
         
          }
          
+         .small-image {
+    max-width: 140px; 
+    max-height: 120px; 
+    }
     </style>
 </head>
 <body>
     <div class="sidebar">
-    
-        <img src="images/a30.jpg" alt="User"> 
+    	<img src="images/a6.png" alt="" class="small-image">
                <h3><p style="color: black;">Welcome, <%= session.getAttribute("username") %></p></h3>
 
         <nav>
@@ -184,7 +205,7 @@
                 <li><a href="AdminDashboard.jsp"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="contact.jsp"><i class="fas fa-user"></i> Contact</a></li>
                
-                <li><a href="switch.jsp"><i class="fas fa-envelope"></i> Messages</a></li>
+                <li><a href="switch.jsp"><i class="fas fa-envelope"></i> Approval</a></li>
                
                 <li> <form action="/checkout" class="logout" method="post">  
        <a href="adminDashboard.jsp"> <i class="fas fa-sign-out-alt"></i> <input type="submit" style="background-color:transparent;border:none;color:white;" value="Logout"></a>
@@ -192,6 +213,7 @@
     </li>
             </ul>
         </nav>
+        
     </div>
     <div class="main-content">
         <div class="header">

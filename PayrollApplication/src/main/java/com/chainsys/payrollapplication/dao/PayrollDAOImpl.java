@@ -167,7 +167,6 @@ public class PayrollDAOImpl implements PayrollDAO {
 		int rowCount = jdbcTemplate.update(updateQuery, status, empCode);
 
 		if (rowCount > 0) {
-			System.out.println("Data updated successfully.");
 			isSuccess = true;
 
 			if ("accepted".equalsIgnoreCase(status)) {
@@ -391,6 +390,15 @@ public class PayrollDAOImpl implements PayrollDAO {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	public void salaryPending(int empCode) {
+		String updateQuery = "UPDATE employee_payscale SET salary_status='Pending' WHERE emp_code=?";
+		int rowCount = jdbcTemplate.update(updateQuery,empCode);
+	}
+
+	
+
+
 }
 
 

@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leave Form</title>
+    <link rel="stylesheet"
+	href="fonts/material-icon/css/material-design-iconic-font.min.css">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -109,6 +112,8 @@
     </style>
 </head>
 <body>
+<input type="hidden" id="status" value="<%= request.getAttribute("status") %>">
+
     <form class="leave-form" action="/leave" method="post" onsubmit="return validateDates()">
         <h2>Leave Application</h2>
         <label for="name">Name</label>
@@ -136,19 +141,30 @@
             <a href="http://localhost:9000/home.jsp">Back</a>
         </div>
     </form>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-    <script>
-        function validateDates() {
-            var fromDate = document.getElementById("fromDate").value;
-            var toDate = document.getElementById("toDate").value;
+    
+    	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="text/javascript">
+    function validateDates() {
+        var fromDate = document.getElementById("fromDate").value;
+        var toDate = document.getElementById("toDate").value;
 
-            if (toDate <= fromDate) {
-                swal("Error", "To date must be greater than From date.", "error");
-                return false; 
-            }
-
-            return true;
+        if (toDate <= fromDate) {
+            Swal.fire("Error", "To date must be greater than From date.", "error");
+            return false;
         }
-    </script>
+
+        return true;
+    }
+    
+    var status = document.getElementById("status").value;
+    if (status === "success") {
+        Swal.fire({
+            icon: 'success',
+            title: 'Submitted!',
+            text: 'Kindly await approval from your manager.'
+        });
+    }
+</script>
+
 </body>
 </html>

@@ -86,6 +86,9 @@
     </style>
 
 <body>
+<input type="hidden" id="status" value="<%= request.getAttribute("status") %>">
+
+
     <div class="photo">
         <div class="form-container">
             <form action="/registerPermission" method="post" onsubmit="return validateTimes()">
@@ -113,8 +116,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
-    <script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
         document.getElementById('start_time').addEventListener('change', function() {
             var startTime = this.value; 
             var maxEndTime = new Date('1970-01-01T' + startTime + 'Z');
@@ -144,6 +147,16 @@
 
             return true; 
         }
+        
+        var status = document.getElementById("status").value;
+        if (status === "success") {
+            Swal.fire({
+                icon: 'success',
+                title: 'Submitted!',
+                text: 'Kindly await approval from your manager.'
+            });
+        }
+        
     </script>
 </body>
 </html>

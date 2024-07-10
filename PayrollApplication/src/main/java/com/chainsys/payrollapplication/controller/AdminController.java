@@ -6,7 +6,6 @@ import java.util.List;
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,8 +53,6 @@ public class AdminController {
 		payrollDAO.insertAdminReport(adminReport,empCode);
 		return "adminReport.jsp"; 
 	}
-
-
 
 	@PostMapping("/adminLogin")
 	public String adminLogin(@RequestParam("username") String name,
@@ -186,11 +183,9 @@ public class AdminController {
 				model.addAttribute("leaveReport", leaveReport);
 				return "leaveInfo.jsp"; 
 			} else {
-
 				return "hello.jsp"; 
 			}
 		} else {
-
 			return "hello.jsp"; 
 		}
 	}
@@ -223,7 +218,6 @@ public class AdminController {
 	public String leaveStatus(@RequestParam("empCode") int empCode,
 			@RequestParam("action") String action,@RequestParam("fromDate") String fromDate,
 			Model model) {
-
 		if (action != null) {
 			if (action.equalsIgnoreCase("rejected")) {
 				int totalLeaveDays = payrollDAO.remainRejectLeaveDays(empCode);
@@ -260,6 +254,7 @@ public class AdminController {
 		int casualLeaveDays = payrollDAO.countCasualLeavePayroll(empCode);//casual
 		int totalCheckinCount = payrollDAO.getTotalCheckinCount(empCode);//workingDays
 		int salary= payrollDAO.getEmployeeSalary(empCode);//salary
+		payrollDAO.salaryPending(empCode); 
 
 		PayrollList payrollList=new PayrollList();
 		payrollList.setEmpCode(empCode);
@@ -312,7 +307,7 @@ public class AdminController {
 		employeePayScale.setCasualLeaveDays(casualLeaveDays);
 		employeePayScale.setSalary(allocateSalary);
 		employeePayScale.setPayrollPermission(String.valueOf(permissionCount));
-		double sickLeaveSalary,halfDayDeduction = 0,fullDayDeduction = 0;
+		double halfDayDeduction = 0,fullDayDeduction = 0;
 		double salary = allocateSalary;
 		double dailySalary = salary / 22;
 		double checkinsSalary = dailySalary * totalCheckinCount;
@@ -374,6 +369,9 @@ public class AdminController {
 			@RequestParam("permissionCount") int permissionCount,
 			@RequestParam("sickLeaveDays") int sickLeaveDays,
 			@RequestParam("casualLeaveDays") int casualLeaveDays,
+			@RequestParam("permissionPayroll") double permissionPayroll,
+			@RequestParam("casualPayroll") double casualPayroll,
+			@RequestParam("sickPayroll") double sickPayroll,
 			@RequestParam("grossSalary") int grossSalary,
 			@RequestParam("pfDeduction") String pfDeduction,
 			@RequestParam("netPay") String netPay,
@@ -385,7 +383,10 @@ public class AdminController {
 		model.addAttribute("totalCheckinCount", totalCheckinCount);
 		model.addAttribute("permissionCount", permissionCount);
 		model.addAttribute("sickLeaveDays", sickLeaveDays);
-		model.addAttribute("casualLeaveDays", casualLeaveDays);
+		model.addAttribute("casualLeaveDays", casualLeaveDays);		
+		model.addAttribute("permissionPayroll", permissionPayroll);
+		model.addAttribute("casualPayroll", casualPayroll);
+		model.addAttribute("sickPayroll", sickPayroll);
 		model.addAttribute("grossSalary", grossSalary);
 		model.addAttribute("pfDeduction", pfDeduction);
 		model.addAttribute("netPay", netPay);
@@ -398,7 +399,10 @@ public class AdminController {
 				"Allocated Salary: Rs." + allocatedSalary + "\n" +
 				"Permission Count: " + permissionCount + "\n" +
 				"Sick Leave Days: " + sickLeaveDays + "\n" +
-				"Casual Leave Days: " + casualLeaveDays + "\n" +
+				"Casual Leave Days: " + casualLeaveDays + "\n" +			
+				"Permission Deduction: " + String.format("%.2f", permissionPayroll)  + "\n" +
+				"Casual Leave Deduction: " + String.format("%.2f", casualPayroll) + "\n" +
+				"sickLeave Deduction: " + String.format("%.2f", sickPayroll )+ "\n" +
 				"Gross Salary: Rs." + grossSalary + "\n" +
 				"PF Deduction: Rs." + pfDeduction + "\n" +
 				"Net Pay: Rs." + netPay + "\n\n" +

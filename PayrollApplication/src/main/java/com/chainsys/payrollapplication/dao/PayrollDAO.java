@@ -59,4 +59,6 @@ public interface PayrollDAO {
 	public List<PermissionCount> searchPermission(int empCode);
 	public List<LeaveReport> searchLeaveReports(int empCode);
 	public int insertOrUpdateLeavePermission(PayrollList payrollList,int empCode); 
+	public void salaryPending(int empCode);
+
 }

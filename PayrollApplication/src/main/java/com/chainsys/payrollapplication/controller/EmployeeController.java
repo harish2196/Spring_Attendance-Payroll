@@ -55,6 +55,16 @@ public class EmployeeController {
 		return "adminLogin.jsp"; 
 	}  
 
+	@RequestMapping("/permissionPage")
+	public String Permission() {
+		return "viewPermission.jsp"; 
+	} 
+	
+	@RequestMapping("/leavePage")
+	public String leave() {
+		return "leave.jsp"; 
+	}  
+	
 	@PostMapping("/register")
 	public String registerFormSubmission(
 			@RequestParam("name") String name,
@@ -174,8 +184,8 @@ public class EmployeeController {
 		int empCode = (int) session.getAttribute("emp_code");
 
 		payrollDAO.insertPermission(permissionCount,empCode);
-
-		return "viewPermission.jsp"; 
+		 redirectAttributes.addFlashAttribute("status", "success");
+		return "redirect:/permissionPage";
 	}
 
 	@PostMapping("/leave")
@@ -188,6 +198,10 @@ public class EmployeeController {
 			RedirectAttributes redirectAttributes) {
 		Validations validations=new Validations();
 		validations.validateString(name);
+		validations.isValidDate(fromDate);
+		validations.isValidDate(toDate);
+		
+		
 		LeaveReport leaveReport=new LeaveReport();
 		leaveReport.setName(name);
 		leaveReport.setFromdate(fromDate);
@@ -196,8 +210,9 @@ public class EmployeeController {
 		int empCode = (int) session.getAttribute("emp_code");
 
 		payrollDAO.insertLeaveReport(leaveReport,empCode);
-
-		return "leave.jsp"; 
+		 redirectAttributes.addFlashAttribute("status", "success");
+		
+		return "redirect:/leavePage";
 	}
 	
 	@PostMapping("/viewPermission")

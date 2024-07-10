@@ -164,5 +164,13 @@ public class Validations {
 	    }
 	}
 
+	 public boolean isValidDate(String input) {
+	        String dateRegex = "\\d{4}-\\d{2}-\\d{2}";
+	        if (!Pattern.matches(dateRegex, input)) {
+	            System.out.println("Invalid date format! Please enter date in yyyy-MM-dd format.");
+	            return false;
+	        }
+			return true;
+	 }
 
 }

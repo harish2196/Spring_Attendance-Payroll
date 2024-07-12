@@ -1,13 +1,9 @@
 package com.chainsys.payrollapplication.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -54,8 +50,8 @@ public class PayrollDAOImpl implements PayrollDAO {
 
 	public int getEmployeeCode(String username) {
 		String sql = "SELECT emp_code FROM Employee_details WHERE username = ?";	
-		Integer empCode = jdbcTemplate.queryForObject(sql,new GetEmpCodeMapper(), username);
-		return empCode;	       
+		return jdbcTemplate.queryForObject(sql,new GetEmpCodeMapper(), username);
+
 	}
 
 
@@ -229,177 +225,180 @@ public class PayrollDAOImpl implements PayrollDAO {
 	}
 
 	public int getTotalWorkingHours(int empCode) {
-		String sumQuery ="SELECT SUM(TIMESTAMPDIFF(MINUTE, checkin_time, checkout_time)) / 60 AS total_minutes FROM checkins_checkouts WHERE emp_code = ?";
-		int count = jdbcTemplate.queryForObject(sumQuery, Integer.class, empCode);
-		return count;			
-	}
-
-	public String getEmployeeName(int empCode) {
-		String getName = "SELECT username FROM Employee_details WHERE emp_code = ?";
-		return jdbcTemplate.queryForObject(getName, String.class, empCode);
-	}
-
-	public String getEmployeeEmail(int empCode) {
-		String getEmail = "SELECT useremail FROM Employee_details WHERE emp_code = ?";
-		return jdbcTemplate.queryForObject(getEmail, String.class, empCode);
-	}
-
-	public int countPermissionsPayroll(int empCode) {
-		String getPermission = "SELECT permission  FROM permission_count WHERE emp_code = ?";
 		try {
-			return jdbcTemplate.queryForObject(getPermission, Integer.class, empCode);		  
+			String sumQuery ="SELECT SUM(TIMESTAMPDIFF(MINUTE, checkin_time, checkout_time)) / 60 AS total_minutes FROM checkins_checkouts WHERE emp_code = ?";
+			int count = jdbcTemplate.queryForObject(sumQuery, Integer.class, empCode);
+			return count;			
 		}catch(Exception e) {
-			return 0;
+			return 0; 
 		}
 	}
 
-	public int countSickLeavePayroll(int empCode) {
-		String sickLeave = "SELECT SUM(DATEDIFF(to_date, from_date)) AS sick_leave_days FROM Leave_report WHERE emp_code = ? AND leave_type = 'sick'";
-		try {
-			return jdbcTemplate.queryForObject(sickLeave, Integer.class, empCode);	
-		}catch(Exception e) {
-			return 0;
+		public String getEmployeeName(int empCode) {
+			String getName = "SELECT username FROM Employee_details WHERE emp_code = ?";
+			return jdbcTemplate.queryForObject(getName, String.class, empCode);
 		}
-	}
 
-	public int countCasualLeavePayroll(int empCode) {
-		String casualLeave = "SELECT SUM(DATEDIFF(to_date, from_date)) AS casual_leave_days FROM Leave_report WHERE emp_code = ? AND leave_type = 'casual'";
-		try {
-			return jdbcTemplate.queryForObject(casualLeave, Integer.class, empCode);
-		}catch(Exception e) {
-			return 0;
+		public String getEmployeeEmail(int empCode) {
+			String getEmail = "SELECT useremail FROM Employee_details WHERE emp_code = ?";
+			return jdbcTemplate.queryForObject(getEmail, String.class, empCode);
 		}
-	}
 
-	public int getTotalCheckinCount(int empCode) {
-		String checkInCount = "SELECT COUNT(checkin_time) AS checkin_count FROM checkins_checkouts WHERE emp_code = ?";
-		return jdbcTemplate.queryForObject(checkInCount, Integer.class, empCode);		  		  	  		
-	}
-
-	public int getEmployeeSalary(int empCode) {
-		String getsalary = "SELECT salary FROM Employee_details WHERE emp_code = ?";
-		try {
-			return jdbcTemplate.queryForObject(getsalary, Integer.class, empCode);
-		}catch(Exception e) {
-			return -1;
-		}
-	}
-
-	public int getEmployeePayscaleSalary(int empCode) {
-		String getsalary = "SELECT salary FROM employee_payscale WHERE emp_code = ?";
-		try {
-			return jdbcTemplate.queryForObject(getsalary, Integer.class, empCode);
-		}catch(Exception e) {
-			return -1;
-		}
-	}
-
-
-	public int insertOrUpdateLeavePermission(PayrollList payrollList) {
-		int affectedRows = 0;
-
-		try {
-			String checkQuery = "SELECT COUNT(*) FROM employee_payscale WHERE emp_code = ?";
-			int count = jdbcTemplate.queryForObject(checkQuery, Integer.class, payrollList.getEmpCode());
-
-			if (count > 0) {
-				String updateQuery = "UPDATE employee_payscale SET username = ?, useremail = ?, payroll_permission = ?, sick_leaveDays = ?, casual_leaveDays = ?, working_days = ?,working_hours= ?, salary = ? WHERE emp_code = ?";
-				affectedRows = jdbcTemplate.update(updateQuery, payrollList.getEmpName(), payrollList.getEmpEmail(),
-						payrollList.getPermissionCount(), payrollList.getSickLeaveDays(),
-						payrollList.getCasualLeaveDays(), payrollList.getTotalCheckinCount(),payrollList.getWorkingHours(),
-						payrollList.getSalary(), payrollList.getEmpCode());
-
-				if (affectedRows > 0) {
-					System.out.println("Data updated successfully.");
-				} else {
-					System.out.println("Data update failed.");
-				}
-			} else {
-				String insertQuery = "INSERT INTO employee_payscale " + "(emp_code, username, useremail, payroll_permission, " + "sick_leaveDays, casual_leaveDays, working_days, " +"working_hours, salary, salary_status) " +"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')";			
-				affectedRows = jdbcTemplate.update(insertQuery, payrollList.getEmpCode(), payrollList.getEmpName(),
-						payrollList.getEmpEmail(), payrollList.getPermissionCount(),
-						payrollList.getSickLeaveDays(), payrollList.getCasualLeaveDays(),
-						payrollList.getTotalCheckinCount(),payrollList.getWorkingHours(), payrollList.getSalary());
-
-				if (affectedRows > 0) {
-					System.out.println("Data inserted successfully.");
-				} else {
-					System.out.println("Data insertion failed.");
-				}
+		public int countPermissionsPayroll(int empCode) {
+			String getPermission = "SELECT permission  FROM permission_count WHERE emp_code = ?";
+			try {
+				return jdbcTemplate.queryForObject(getPermission, Integer.class, empCode);		  
+			}catch(Exception e) {
+				return 0;
 			}
-		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
 		}
 
-		return affectedRows;
+		public int countSickLeavePayroll(int empCode) {
+			String sickLeave = "SELECT SUM(DATEDIFF(to_date, from_date)) AS sick_leave_days FROM Leave_report WHERE emp_code = ? AND leave_type = 'sick'";
+			try {
+				return jdbcTemplate.queryForObject(sickLeave, Integer.class, empCode);	
+			}catch(Exception e) {
+				return 0;
+			}
+		}
+
+		public int countCasualLeavePayroll(int empCode) {
+			String casualLeave = "SELECT SUM(DATEDIFF(to_date, from_date)) AS casual_leave_days FROM Leave_report WHERE emp_code = ? AND leave_type = 'casual'";
+			try {
+				return jdbcTemplate.queryForObject(casualLeave, Integer.class, empCode);
+			}catch(Exception e) {
+				return 0;
+			}
+		}
+
+		public int getTotalCheckinCount(int empCode) {
+			String checkInCount = "SELECT COUNT(checkin_time) AS checkin_count FROM checkins_checkouts WHERE emp_code = ?";
+			return jdbcTemplate.queryForObject(checkInCount, Integer.class, empCode);		  		  	  		
+		}
+
+		public int getEmployeeSalary(int empCode) {
+			String getsalary = "SELECT salary FROM Employee_details WHERE emp_code = ?";
+			try {
+				return jdbcTemplate.queryForObject(getsalary, Integer.class, empCode);
+			}catch(Exception e) {
+				return -1;
+			}
+		}
+
+		public int getEmployeePayscaleSalary(int empCode) {
+			String getsalary = "SELECT salary FROM employee_payscale WHERE emp_code = ?";
+			try {
+				return jdbcTemplate.queryForObject(getsalary, Integer.class, empCode);
+			}catch(Exception e) {
+				return -1;
+			}
+		}
+
+
+		public int insertOrUpdateLeavePermission(PayrollList payrollList) {
+			int affectedRows = 0;
+
+			try {
+				String checkQuery = "SELECT COUNT(*) FROM employee_payscale WHERE emp_code = ?";
+				int count = jdbcTemplate.queryForObject(checkQuery, Integer.class, payrollList.getEmpCode());
+
+				if (count > 0) {
+					String updateQuery = "UPDATE employee_payscale SET username = ?, useremail = ?, payroll_permission = ?, sick_leaveDays = ?, casual_leaveDays = ?, working_days = ?,working_hours= ?, salary = ? WHERE emp_code = ?";
+					affectedRows = jdbcTemplate.update(updateQuery, payrollList.getEmpName(), payrollList.getEmpEmail(),
+							payrollList.getPermissionCount(), payrollList.getSickLeaveDays(),
+							payrollList.getCasualLeaveDays(), payrollList.getTotalCheckinCount(),payrollList.getWorkingHours(),
+							payrollList.getSalary(), payrollList.getEmpCode());
+
+					if (affectedRows > 0) {
+						System.out.println("Data updated successfully.");
+					} else {
+						System.out.println("Data update failed.");
+					}
+				} else {
+					String insertQuery = "INSERT INTO employee_payscale " + "(emp_code, username, useremail, payroll_permission, " + "sick_leaveDays, casual_leaveDays, working_days, " +"working_hours, salary, salary_status) " +"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')";			
+					affectedRows = jdbcTemplate.update(insertQuery, payrollList.getEmpCode(), payrollList.getEmpName(),
+							payrollList.getEmpEmail(), payrollList.getPermissionCount(),
+							payrollList.getSickLeaveDays(), payrollList.getCasualLeaveDays(),
+							payrollList.getTotalCheckinCount(),payrollList.getWorkingHours(), payrollList.getSalary());
+
+					if (affectedRows > 0) {
+						System.out.println("Data inserted successfully.");
+					} else {
+						System.out.println("Data insertion failed.");
+					}
+				}
+			} catch (Exception e) {
+				System.err.println("Error: " + e.getMessage());
+			}
+
+			return affectedRows;
+		}
+
+		public List<EmployeePayScale> getAllEmployeePayScales() {
+			String getEmpPayScale = "SELECT id, emp_code, username, useremail, payroll_permission,sick_leaveDays, casual_leaveDays, working_days, working_hours,salary,salary_status, gross_pay,Pf, netpay FROM employee_payscale";
+			return jdbcTemplate.query(getEmpPayScale, new EmployeePayscaleMapper());
+		}
+
+		public List<EmployeePayScale> searchEmployeePayScales(int empCode) {
+			String getEmpPayScale = "SELECT id, emp_code, username, useremail, payroll_permission,sick_leaveDays, casual_leaveDays, working_days, working_hours,salary,salary_status, gross_pay,Pf, netpay FROM employee_payscale WHERE emp_code=?";
+			return jdbcTemplate.query(getEmpPayScale, new EmployeePayscaleMapper(),empCode);
+		}
+
+		public void payrollPays(EmployeePayScale employeePayScale, int empCode) {
+			String updateQuery = "UPDATE employee_payscale SET gross_pay=?, Pf=?, netpay=? WHERE emp_code=?";
+			int rowCount = jdbcTemplate.update(updateQuery,employeePayScale.getGrossPay(),employeePayScale.getPf(),employeePayScale.getNetPay(),empCode);
+		}
+
+		public List<PermissionCount> getPermissionStatus(int empCode){
+			String getAllQuery = "SELECT emp_code,name, date, start_time, end_time, status, permission FROM permission_count WHERE emp_code=?";
+			return jdbcTemplate.query(getAllQuery, new PermissionMapper(),empCode);
+		}
+
+		public List<LeaveReport> getAllLeaveStatus(int empCode) {
+			String getAllQuery = "SELECT emp_code, name, from_date, to_date, leave_type, leave_Count, status FROM Leave_report WHERE emp_code=?";
+			return jdbcTemplate.query(getAllQuery, new LeaveInfoMapper(),empCode);
+		}
+
+		public void salaryCredited(int empCode) {
+			String updateQuery = "UPDATE employee_payscale SET salary_status='Credited' WHERE emp_code=?";
+			int rowCount = jdbcTemplate.update(updateQuery,empCode);
+		}
+
+
+		public List<Employees> getEmployeeDeatils(int empCode) {
+			String getAllQuery = "SELECT emp_code,username,designation,useremail,userpassword,usermobile,image,salary FROM Employee_details WHERE emp_code=?";
+			return jdbcTemplate.query(getAllQuery, new PayrollMapper(), empCode);	
+		}
+
+		public List<AdminReport> getReport(int empCode) {
+			String getAllQuery = "SELECT emp_code, name, report_text FROM admin_report WHERE emp_code=?";
+			return jdbcTemplate.query(getAllQuery, new AdminReportMapper(),empCode);
+		}
+
+		public List<PermissionCount> searchPermission(int empCode){
+			String getAllQuery = "SELECT emp_code, name, date, start_time, end_time, status, permission FROM permission_count  WHERE emp_code=?";
+			return jdbcTemplate.query(getAllQuery, new PermissionMapper(),empCode);
+		}
+
+		public List<LeaveReport> searchLeaveReports(int empCode) {
+			String getAllQuery = "SELECT emp_code, name, from_date, to_date, leave_type, leave_Count, status FROM Leave_report WHERE emp_code=? ";
+			return jdbcTemplate.query(getAllQuery, new LeaveInfoMapper(),empCode);
+		}
+
+		@Override
+		public int insertOrUpdateLeavePermission(PayrollList payrollList, int empCode) {
+			return 0;
+		}
+
+		public void salaryPending(int empCode) {
+			String updateQuery = "UPDATE employee_payscale SET salary_status='Pending' WHERE emp_code=?";
+			int rowCount = jdbcTemplate.update(updateQuery,empCode);
+		}
+
+
+
+
 	}
-
-	public List<EmployeePayScale> getAllEmployeePayScales() {
-		String getEmpPayScale = "SELECT id, emp_code, username, useremail, payroll_permission,sick_leaveDays, casual_leaveDays, working_days, working_hours,salary,salary_status, gross_pay,Pf, netpay FROM employee_payscale";
-		return jdbcTemplate.query(getEmpPayScale, new EmployeePayscaleMapper());
-	}
-
-	public List<EmployeePayScale> searchEmployeePayScales(int empCode) {
-		String getEmpPayScale = "SELECT id, emp_code, username, useremail, payroll_permission,sick_leaveDays, casual_leaveDays, working_days, working_hours,salary,salary_status, gross_pay,Pf, netpay FROM employee_payscale WHERE emp_code=?";
-		return jdbcTemplate.query(getEmpPayScale, new EmployeePayscaleMapper(),empCode);
-	}
-
-	public void payrollPays(EmployeePayScale employeePayScale, int empCode) {
-		String updateQuery = "UPDATE employee_payscale SET gross_pay=?, Pf=?, netpay=? WHERE emp_code=?";
-		int rowCount = jdbcTemplate.update(updateQuery,employeePayScale.getGrossPay(),employeePayScale.getPf(),employeePayScale.getNetPay(),empCode);
-	}
-
-	public List<PermissionCount> getPermissionStatus(int empCode){
-		String getAllQuery = "SELECT emp_code,name, date, start_time, end_time, status, permission FROM permission_count WHERE emp_code=?";
-		return jdbcTemplate.query(getAllQuery, new PermissionMapper(),empCode);
-	}
-
-	public List<LeaveReport> getAllLeaveStatus(int empCode) {
-		String getAllQuery = "SELECT emp_code, name, from_date, to_date, leave_type, leave_Count, status FROM Leave_report WHERE emp_code=?";
-		return jdbcTemplate.query(getAllQuery, new LeaveInfoMapper(),empCode);
-	}
-
-	public void salaryCredited(int empCode) {
-		String updateQuery = "UPDATE employee_payscale SET salary_status='Credited' WHERE emp_code=?";
-		int rowCount = jdbcTemplate.update(updateQuery,empCode);
-	}
-
-
-	public List<Employees> getEmployeeDeatils(int empCode) {
-		String getAllQuery = "SELECT emp_code,username,designation,useremail,userpassword,usermobile,image,salary FROM Employee_details WHERE emp_code=?";
-		return jdbcTemplate.query(getAllQuery, new PayrollMapper(), empCode);	
-	}
-
-	public List<AdminReport> getReport(int empCode) {
-		String getAllQuery = "SELECT emp_code, name, report_text FROM admin_report WHERE emp_code=?";
-		return jdbcTemplate.query(getAllQuery, new AdminReportMapper(),empCode);
-	}
-
-	public List<PermissionCount> searchPermission(int empCode){
-		String getAllQuery = "SELECT emp_code, name, date, start_time, end_time, status, permission FROM permission_count  WHERE emp_code=?";
-		return jdbcTemplate.query(getAllQuery, new PermissionMapper(),empCode);
-	}
-
-	public List<LeaveReport> searchLeaveReports(int empCode) {
-		String getAllQuery = "SELECT emp_code, name, from_date, to_date, leave_type, leave_Count, status FROM Leave_report WHERE emp_code=? ";
-		return jdbcTemplate.query(getAllQuery, new LeaveInfoMapper(),empCode);
-	}
-
-	@Override
-	public int insertOrUpdateLeavePermission(PayrollList payrollList, int empCode) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void salaryPending(int empCode) {
-		String updateQuery = "UPDATE employee_payscale SET salary_status='Pending' WHERE emp_code=?";
-		int rowCount = jdbcTemplate.update(updateQuery,empCode);
-	}
-
-	
-
-
-}
 
 
 

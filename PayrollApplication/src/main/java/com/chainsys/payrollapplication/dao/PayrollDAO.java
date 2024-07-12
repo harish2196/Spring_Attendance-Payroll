@@ -1,6 +1,4 @@
 package com.chainsys.payrollapplication.dao;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;

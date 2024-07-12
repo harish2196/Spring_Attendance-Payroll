@@ -61,12 +61,6 @@ body {
 	transition: transform 0.3s ease-out, text-shadow 0.3s ease-out;
 }
 
-/* .logo:hover {
-	text-shadow: 4px 6px 10px rgba(2, 0, 1, 0.5);
-	transform: scale(1.2);
-	right:0;
-	left:0;
-} */
 .para p {
 	width: 35%;
 	text-align: right;
@@ -201,7 +195,7 @@ footer {
 .custom-nav {
 	background-color: lightgray;
 	padding: 10px 5px;
-	width: 45%;
+	width: 52%;
 	margin: 3% auto 0;
 	border-radius: 20px;
 	overflow: hidden;
@@ -298,6 +292,9 @@ footer {
 	bottom: 0;
 	margin-top: 12.5%;
 }
+  .custom-dropdown :hover {
+            color: #0a75b8; 
+        }
 
 .small-image {
 	max-width: 140px;
@@ -325,7 +322,7 @@ footer {
 							<%= session.getAttribute("username") %></p>
 					</div>
 
-					<li class="nav-item"><a class="nav-link" href="Home.jsp">Home</a>
+					<li class="nav-item"><a class="nav-link" href="home.jsp">Home</a>
 					</li>
 					<li class="nav-item"><a class="nav-link" href="joinUs.jsp">Join
 							Us</a></li>
@@ -353,23 +350,14 @@ footer {
 
 		<div class="custom-dropdown">
 			<button class="custom-dropbtn">
-				Leave Application <i class="fa fa-caret-down"></i>
+				AbsenceForm<i class="fa fa-caret-down"></i>
 			</button>
 			<div class="custom-dropdown-content">
 				<a href="viewPermission.jsp">Apply Permission</a> <a
 					href="leave.jsp">Apply Leave</a>
 			</div>
 		</div>
-
-		<div class="custom-dropdown">
-
-			<button type="button"
-				onclick="window.location.href='adminReport.jsp'">Admin
-				Report</button>
-			</a>
-
-
-		</div>
+	
 		<div class="custom-dropdown">
 			<button class="custom-dropbtn">
 				Status <i class="fa fa-caret-down"></i>
@@ -384,6 +372,13 @@ footer {
 
 			</div>
 		</div>
+		
+			<div class="custom-dropdown">
+
+			<button type="button"
+				onclick="window.location.href='adminReport.jsp'">AdminReport</button>
+			</a>
+		</div>
 
 		<div class="custom-dropdown">
 			<form action="/timeSheet" class="a1" method="post">
@@ -393,8 +388,17 @@ footer {
 			</form>
 			</a>
 		</div>
+		
+		<div class="custom-dropdown" style="margin-top: -0.3%; margin-left: 0.1%;">
+			<form action="/absence" class="a1" method="post">
+				<button type="submit" value="submit">LeaveSummary</button>
+				</a>
+			</form>
+
+		</div>
+		
 		<div class="custom-dropdown" style="margin-top: 1%; margin-left: 1%;">
-			<form action="/payslip" class="a1" method="post">
+			<form action="/employeePayslip" class="a1" method="post">
 				<button type="submit" value="submit">Payslip</button>
 				</a>
 			</form>

@@ -9,6 +9,7 @@
     <meta charset="UTF-8">
     <title>Leave Details</title>
      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
   
@@ -28,67 +29,7 @@
         tr:hover {
             background-color: #f5f5f5;   
         }
-         .accept-button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            margin: 2px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .reject-button {
-            background-color: #f44336; 
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            margin: 2px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .submit-button {
-            background-color: #008CBA; 
-            border: none;
         
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .accept-button:hover {
-    background-color: #45a049; 
-}
-
-.reject-button:hover {
-    background-color: #e53935;
-}
-
-.submit-button:hover {
-    background-color: #0077b3;
-}
-    input[type="submit"] {
-            padding: 4px 10px;
-            border: none;
-            border-radius: 4px;
-            background-color: #28a745;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        input[type="submit"]:hover {
-            background-color: #218838;
-        }
         .custom-nav {
             background-color: lightgray;
             padding: 10px 5px;
@@ -186,6 +127,27 @@
      margin-top:5%;
    
 }
+.back-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; 
+}
+
+.back-button a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: firebrick;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button a:hover {
+    background-color: brown;
+}
+
+
         
     </style>
 </head>
@@ -201,8 +163,8 @@
         <ul class="navbar-nav ml-auto">
   
    <div>
-<%--     <p style="color: white;margin-top:6.7%;bottom:0;margin-left=-60%">Welcome, <%= session.getAttribute("name") %></p>
- --%></div>
+     <p style="color: white;margin-top:6.7%;bottom:0;margin-left=-60%">Welcome, <%= session.getAttribute("username") %></p>
+ </div>
 
         <li class="nav-item">
             <a class="nav-link" href="home.jsp">Home</a>
@@ -256,6 +218,8 @@
            
             %>
         </table>
-   
+      <div class="back-button">
+    <a href="home.jsp">Back</a>
+</div>
 </body>
 </html>

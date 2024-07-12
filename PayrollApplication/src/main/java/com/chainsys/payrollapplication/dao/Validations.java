@@ -77,7 +77,7 @@ public class Validations {
 		}
 	}
 
-	public static boolean validateString(String input) throws IllegalArgumentException {
+	public boolean validateString(String input) throws IllegalArgumentException {
 		try {
 			String regex = "^[a-zA-Z]+$";
 			if(input.matches(regex)) {

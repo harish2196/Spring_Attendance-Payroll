@@ -180,12 +180,31 @@
         input[type="button"]:hover {
             background-color: #218838;
         }
-     
+.back-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; 
+}
+
+.back-button a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: firebrick;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button a:hover {
+    background-color: brown;
+}
+
     
     </style>
 </head>
  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
+    <div class="container">    
       <a class="navbar-brand" href="#">I N N O W E L L</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -194,8 +213,8 @@
         <ul class="navbar-nav ml-auto">
   
    <div>
-    <%-- <p style="color: white;margin-top:8%;bottom:0;">Welcome, <%= session.getAttribute("name") %></p>
- --%></div>
+     <p style="color: white;margin-top:8%;bottom:0;">Welcome, <%= session.getAttribute("username") %></p>
+ </div>
 
         <li class="nav-item">
             <a class="nav-link" href="home.jsp">Home</a>
@@ -206,20 +225,13 @@
           <li class="nav-item">
             <a class="nav-link" href="contact.jsp">Contact</a>
           </li>
-       <!--     <li class="nav-item">
-            <form action="/adminCheckOut" class="logoutt" method="get">
-							<a href="login.jsp"> <input type="submit"
-								value="Logout">
-							</a>
-						</form>
-          </li> -->
+  
         </ul>
       </div>
     </div>
   </nav>
   
 <body>
- 
  
     <h1>Employee Permission Details</h1>
     
@@ -258,5 +270,9 @@
             </tr>
         <% } %>
     </table>
+    <div class="back-button">
+    <a href="home.jsp">Back</a>
+</div>
+    
 </body>
 </html>

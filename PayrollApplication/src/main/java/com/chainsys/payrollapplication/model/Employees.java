@@ -1,7 +1,5 @@
 package com.chainsys.payrollapplication.model;
 
-import org.springframework.stereotype.Component;
-
 
 public class Employees {
 

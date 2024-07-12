@@ -2,8 +2,6 @@ package com.chainsys.payrollapplication.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
-
 import org.springframework.jdbc.core.RowMapper;
 
 import com.chainsys.payrollapplication.model.LeaveReport;

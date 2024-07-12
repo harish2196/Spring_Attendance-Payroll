@@ -206,13 +206,7 @@
           <li class="nav-item">
             <a class="nav-link" href="contact.jsp">Contact</a>
           </li>
-     <!--   <li class="nav-item">
-            <form action="/adminCheckOut"  method="get">
-							<a href="adminDashboard.jsp"> <input type="submit"
-								value="Logout">
-							</a>
-						</form>
-          </li>  -->
+
         </ul>
       </div>
     </div>

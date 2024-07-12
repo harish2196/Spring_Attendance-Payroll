@@ -28,7 +28,6 @@ if (session.getAttribute("username") == null) {
             font-family: Arial, sans-serif;
             margin: 0;            
             display: flex;
-           
             height: 100vh;
         }
 

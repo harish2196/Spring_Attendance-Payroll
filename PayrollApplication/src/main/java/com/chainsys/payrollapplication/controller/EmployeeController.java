@@ -15,6 +15,7 @@ import com.chainsys.payrollapplication.dao.PayrollDAO;
 import com.chainsys.payrollapplication.model.EmployeePayScale;
 import com.chainsys.payrollapplication.model.Employees;
 import com.chainsys.payrollapplication.model.LeaveReport;
+import com.chainsys.payrollapplication.model.PayrollList;
 import com.chainsys.payrollapplication.model.PermissionCount;
 
 import jakarta.servlet.http.HttpSession;
@@ -37,10 +38,19 @@ public class EmployeeController {
 		return "login.jsp"; 
 	}  
 
+	@RequestMapping("/approvedpayslip")
+	public String employeePayslip() {
+		return "employeePayslip.jsp"; 
+	}  
+
 	@RequestMapping("/admin")
 	public String adminLog() {
 		return "adminLogin.jsp"; 
 	}  
+	@RequestMapping("/home")
+	public String homePage() {
+		return "home.jsp"; 
+	} 
 
 	@RequestMapping("/permissionPage")
 	public String Permission() {
@@ -156,6 +166,7 @@ public class EmployeeController {
 			@RequestParam("date") String date,
 			@RequestParam("start_time") String startTime,
 			@RequestParam("end_time") String endTime,
+			@RequestParam("reason") String message,
 			HttpSession session,
 			RedirectAttributes redirectAttributes) {
 		Validations validations=new Validations();
@@ -166,6 +177,7 @@ public class EmployeeController {
 		permissionCount.setDate(date);
 		permissionCount.setStartTime(startTime);
 		permissionCount.setEndTime(endTime);
+		permissionCount.setInfoText(message);
 		int empCode = (int) session.getAttribute("emp_code");
 
 		payrollDAO.insertPermission(permissionCount,empCode);
@@ -217,104 +229,136 @@ public class EmployeeController {
 		return "leaveStatus.jsp"; 
 	}
 
+	@PostMapping("/timeSheet")
+	public String timeSheetValidation(HttpSession session,Model model) {
+		int empCode = (Integer) session.getAttribute("emp_code");
+
+		String empName=payrollDAO.getEmployeeName(empCode);//name
+		int hour=payrollDAO.getTotalWorkingHours(empCode);//hour
+		String empEmail= payrollDAO.getEmployeeEmail(empCode);//email
+		int permissionCount = payrollDAO.countPermissionsPayroll(empCode);//permission
+		int sickLeaveDays = payrollDAO.countSickLeavePayroll(empCode);//sick
+		int casualLeaveDays = payrollDAO.countCasualLeavePayroll(empCode);//casual
+		int totalCheckinCount = payrollDAO.getTotalCheckinCount(empCode);//workingDays
+		int salary= payrollDAO.getEmployeeSalary(empCode);//salary
+		payrollDAO.salaryPending(empCode); 
+
+		PayrollList payrollList=new PayrollList();
+		payrollList.setEmpCode(empCode);
+		payrollList.setEmpName(empName);
+		payrollList.setEmpEmail(empEmail);
+		payrollList.setPermissionCount(permissionCount);
+		payrollList.setSickLeaveDays(sickLeaveDays);
+		payrollList.setCasualLeaveDays(casualLeaveDays);
+		payrollList.setTotalCheckinCount(totalCheckinCount);
+		payrollList.setWorkingHours(hour);
+		payrollList.setSalary(salary);
+
+		payrollDAO.insertOrUpdateLeavePermission(payrollList);
+		model.addAttribute("payrollList", payrollList);
+		return "payrollCalculation.jsp";
+	}
+
+
 	@PostMapping("/employeePayslip")
-	public String viewEmployeepayslip(RedirectAttributes redirectAttributes,HttpSession session,
-			Model model) {
+	public String viewEmployeepayslip(RedirectAttributes redirectAttributes, HttpSession session, Model model) {
+		int empCode = (Integer) session.getAttribute("emp_code");
 
-		int empCode = (Integer) session.getAttribute("emp_code");	
+		String name = payrollDAO.getEmployeeName(empCode);
+		String email = payrollDAO.getEmployeeEmail(empCode);
+		int totalCheckinCount = payrollDAO.getTotalCheckinCount(empCode);
+		int sickLeaveDays = payrollDAO.countSickLeavePayroll(empCode);
+		int casualLeaveDays = payrollDAO.countCasualLeavePayroll(empCode);
+		int permissionCount = payrollDAO.countPermissionsPayroll(empCode);
+		int allocateSalary = payrollDAO.getEmployeePayscaleSalary(empCode);
 
-		int totalCheckinCount, sickLeaveDays, casualLeaveDays, permissionCount,allocateSalary;
-		String name, email;
+		boolean isCredited = payrollDAO.isSalaryCredited(empCode);
+		if (!isCredited) {
+			redirectAttributes.addFlashAttribute("status", "failed");
+			System.out.println("Salary status is not 'Credited' for empCode: " + empCode);
+			return "redirect:/home";
+		}
 
 		EmployeePayScale employeePayScale = new EmployeePayScale();
 		employeePayScale.setEmpCode(empCode);
-		name = payrollDAO.getEmployeeName(empCode);
-		employeePayScale.setUsername(name); 
-		email = payrollDAO.getEmployeeEmail(empCode);
-		employeePayScale.setUserEmail(email); 
-
-		totalCheckinCount = payrollDAO.getTotalCheckinCount(empCode);
-		sickLeaveDays = payrollDAO.countSickLeavePayroll(empCode);
-		casualLeaveDays = payrollDAO.countCasualLeavePayroll(empCode);
-		permissionCount = payrollDAO.countPermissionsPayroll(empCode);
-		allocateSalary=payrollDAO.getEmployeePayscaleSalary(empCode);
-
+		employeePayScale.setUsername(name);
+		employeePayScale.setUserEmail(email);
 		employeePayScale.setWorkingDays(totalCheckinCount);
 		employeePayScale.setSickLeaveDays(sickLeaveDays);
 		employeePayScale.setCasualLeaveDays(casualLeaveDays);
 		employeePayScale.setSalary(allocateSalary);
 		employeePayScale.setPayrollPermission(String.valueOf(permissionCount));
-		double halfDayDeduction = 0,fullDayDeduction = 0;
-		double salary = allocateSalary;
-		double dailySalary = salary / 22;
+
+
+		double dailySalary = allocateSalary / 22.0;
 		double checkinsSalary = dailySalary * totalCheckinCount;
+		double halfDayDeduction = 0.0, fullDayDeduction = 0.0;
 
 		if (permissionCount > 2) {
 			halfDayDeduction = (permissionCount - 2) * (dailySalary / 2);
 			checkinsSalary -= halfDayDeduction;
-		}		
+		}
+
+		if (sickLeaveDays >= 3) {
+			fullDayDeduction = (sickLeaveDays - 2) * dailySalary;
+			checkinsSalary -= fullDayDeduction;
+		}
+
+		if (casualLeaveDays >= 2) {
+			fullDayDeduction = (casualLeaveDays - 1) * dailySalary;
+			checkinsSalary -= fullDayDeduction;
+		}
+
 		employeePayScale.setPermissionPayscale(halfDayDeduction);
+		employeePayScale.setSickLeavePayscale(fullDayDeduction);
+		employeePayScale.setCasualLeavePayscale(fullDayDeduction);
 
-
-		if(sickLeaveDays >= 2 && sickLeaveDays < 3) {
-			checkinsSalary=checkinsSalary;
-			employeePayScale.setSickLeavePayscale(0.0);
-
-		}else if (sickLeaveDays >= 3 ) {
-			fullDayDeduction =(sickLeaveDays-2) * (dailySalary);
-			checkinsSalary -= fullDayDeduction;
-			employeePayScale.setSickLeavePayscale(fullDayDeduction);
-		}
-
-
-
-		if (casualLeaveDays >= 1 && casualLeaveDays < 2 ) {
-			checkinsSalary=checkinsSalary;
-			employeePayScale.setCasualLeavePayscale(0.0);
-		}else if(casualLeaveDays >= 2) {
-			fullDayDeduction = (casualLeaveDays - 1) * (dailySalary);
-			checkinsSalary -= fullDayDeduction;
-			employeePayScale.setCasualLeavePayscale(fullDayDeduction);
-		}
-
-
-		employeePayScale.setSalary((int)salary);		
-		employeePayScale.setGrossPay(checkinsSalary);
 		double pfDeduction = checkinsSalary * 0.12;
-		employeePayScale.setPf((int) pfDeduction);
 		double netPay = checkinsSalary - pfDeduction;
+
+		employeePayScale.setGrossPay(checkinsSalary);
+		employeePayScale.setPf((int) pfDeduction);
 		employeePayScale.setNetPay((int) netPay);
 
 		payrollDAO.payrollPays(employeePayScale, empCode);
 
 		model.addAttribute("employeePayScale", employeePayScale);
 		model.addAttribute("dailySalary", dailySalary);
+		System.err.println("--->"+dailySalary);
 		model.addAttribute("grossSalary", (int) checkinsSalary);
 		model.addAttribute("pfDeduction", pfDeduction);
 		model.addAttribute("netPay", netPay);
-		model.addAttribute("salary", salary);
+		model.addAttribute("salary", allocateSalary);
+
 		return "employeePayslip.jsp";
 	}
 
 	@PostMapping("/absence")
 	public String getEmployeeAbsence(RedirectAttributes redirectAttributes,HttpSession session,Model model) {
-		int permissionCount,sickLeaveDays,casualLeaveDays;
+		int permissionCount,sickLeaveDays,casualLeaveDays,totalCheckinCount;
+		String name;
 		EmployeePayScale employeePayScale = new EmployeePayScale();
 		int empCode = (Integer) session.getAttribute("emp_code");
 		permissionCount = payrollDAO.countPermissionsPayroll(empCode);
 		sickLeaveDays = payrollDAO.countSickLeavePayroll(empCode);
 		casualLeaveDays = payrollDAO.countCasualLeavePayroll(empCode);
-	
-		int remainPermissionCount = permissionCount - 2;
-		int remainSickLeaveDays = sickLeaveDays - 2;
-		int remainCasualLeaveDays = casualLeaveDays - 1;
-		
+		name = payrollDAO.getEmployeeName(empCode);
+		totalCheckinCount = payrollDAO.getTotalCheckinCount(empCode);
+
+		int remainPermissionCount = 2 - permissionCount;
+		int remainSickLeaveDays = 2 - sickLeaveDays;
+		int remainCasualLeaveDays = 1 - casualLeaveDays;
+
+		employeePayScale.setEmpCode(empCode);
+		employeePayScale.setUsername(name); 
+		employeePayScale.setWorkingDays(totalCheckinCount);
 		employeePayScale.setSickLeaveDays(remainSickLeaveDays);
 		employeePayScale.setCasualLeaveDays(remainCasualLeaveDays);
 		employeePayScale.setPayrollPermission(String.valueOf(remainPermissionCount));
+
 		model.addAttribute("employeePayScale", employeePayScale);
 
-		
+
 		return "leaveBalance.jsp";
 
 	}

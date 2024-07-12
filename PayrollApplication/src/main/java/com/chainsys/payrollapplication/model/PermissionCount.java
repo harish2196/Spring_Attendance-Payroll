@@ -9,8 +9,17 @@ public class PermissionCount {
     public String endTime;
     public String status;
     public String permissionCount;
+    public String infoText;
 
-    public PermissionCount() {
+    public String getInfoText() {
+		return infoText;
+	}
+
+	public void setInfoText(String infoText) {
+		this.infoText = infoText;
+	}
+
+	public PermissionCount() {
     }
 
 	public int getEmpCode() {

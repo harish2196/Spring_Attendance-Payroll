@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,9 +13,7 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-	<input type="hidden" id="status"
-		value="<%= request.getAttribute("status") %>">
+	<input type="hidden" id="status" value="<%= request.getAttribute("status") %>">
 
 	<div class="main">
 		<section class="signup">
@@ -41,17 +41,19 @@
 
 							<div class="form-group">
 								<label for="email"><i class="zmdi zmdi-email"></i></label> <input
-									type="email" name="email" id="email" placeholder="Your Email"
-									pattern="[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[com]$"
+									type="email" name="email" id="mailInput" oninput="validateEmailInput()"  placeholder="Your Email"
+									
 									required="required" />
+									<span id="emailFeedback" style="color: red;"></span>
 							</div>
+							        				
 
 							<div class="form-group">
 								<label for="contact"><i class="zmdi zmdi-phone"></i></label> <input
 									type="text" name="contact" id="contact"
 									placeholder="Contact no" pattern="[0-9]{10}"
-									required="required" />
-							</div>
+									required="required"/>
+							</div>				
 
 							<div class="form-group">
 								<label for="image"><i class="zmdi zmdi-image"></i></label> <input
@@ -59,18 +61,19 @@
 									required="required" />
 							</div>
 
-							<div class="form-group">
-								<label for="pass"><i class="zmdi zmdi-lock"></i></label> <input
-									type="password" name="pass" id="pass" placeholder="Password"
-									pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+.])(?=.*\d).{8,}$"
+	<div class="form-group">
+								<label for="pass"><i class="zmdi zmdi-email"></i></label> <input
+									type="password" name="pass" id="passInput" oninput="validatePassInput()"  placeholder="Password"
+									
 									required="required" />
+									<span id="passFeedback" style="color: red;"></span>
 							</div>
 
 							<div class="form-group">
 								<label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
 								<input type="password" name="re_pass" id="re_pass"
 									placeholder="Repeat your password"
-									pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+.])(?=.*\\d).{8,}$"
+									oninput=""
 									required="required" />
 							</div>
 
@@ -115,6 +118,40 @@
             text: 'Your registration was successful! Your Emp Code is: ' + empCode
         });
     }   
+    
+    
+    function validateEmailInput() {
+        const emailInput = document.getElementById('mailInput').value;
+        const feedbackElement = document.getElementById('emailFeedback');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (emailRegex.test(emailInput)) {
+            feedbackElement.textContent = ""; 
+        } else {
+            if (emailInput == "") {
+                feedbackElement.textContent = "";
+            } else {
+                feedbackElement.textContent = "Please enter a valid email address.";
+            }
+        }
+    } 
+ 
+     function validatePassInput() {
+        const passInput = document.getElementById('passInput').value;
+        const feedbackElement = document.getElementById('passFeedback');
+        const passRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+
+        if (passRegex.test(passInput)) {
+            feedbackElement.textContent = ""; 
+            contentElement.textContent = "";
+        } else {
+            if (passInput == "") {
+                feedbackElement.textContent = "";
+            } else {
+                feedbackElement.textContent = "Please enter a valid Password.";
+            }
+        }
+    } 
 </script>
 
 </body>

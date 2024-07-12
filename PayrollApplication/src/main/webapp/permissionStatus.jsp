@@ -246,6 +246,7 @@
             <th>End Time</th>
             <th>Status</th>
             <th>Permission Count</th>
+            <th>Message</th>
            
         </tr>
         <% 
@@ -261,6 +262,7 @@
                 <td><%= permission.getEndTime() %></td>
                 <td><%= permission.getStatus() %></td>
                 <td><%= permission.getPermissionCount() %></td>
+                 <td><%= permission.getInfoText() %></td>
                
             </tr>
         <% } 

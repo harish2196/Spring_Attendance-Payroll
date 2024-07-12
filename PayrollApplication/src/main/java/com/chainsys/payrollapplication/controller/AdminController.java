@@ -242,37 +242,7 @@ public class AdminController {
 		return "checkInOuts.jsp"; 
 	}
 
-	@PostMapping("/timeSheet")
-	public String timeSheetValidation(HttpSession session,Model model) {
-		int empCode = (Integer) session.getAttribute("emp_code");
-
-		String empName=payrollDAO.getEmployeeName(empCode);//name
-		int hour=payrollDAO.getTotalWorkingHours(empCode);//hour
-		String empEmail= payrollDAO.getEmployeeEmail(empCode);//email
-		int permissionCount = payrollDAO.countPermissionsPayroll(empCode);//permission
-		int sickLeaveDays = payrollDAO.countSickLeavePayroll(empCode);//sick
-		int casualLeaveDays = payrollDAO.countCasualLeavePayroll(empCode);//casual
-		int totalCheckinCount = payrollDAO.getTotalCheckinCount(empCode);//workingDays
-		int salary= payrollDAO.getEmployeeSalary(empCode);//salary
-		payrollDAO.salaryPending(empCode); 
-
-		PayrollList payrollList=new PayrollList();
-		payrollList.setEmpCode(empCode);
-		payrollList.setEmpName(empName);
-		payrollList.setEmpEmail(empEmail);
-		payrollList.setPermissionCount(permissionCount);
-		payrollList.setSickLeaveDays(sickLeaveDays);
-		payrollList.setCasualLeaveDays(casualLeaveDays);
-		payrollList.setTotalCheckinCount(totalCheckinCount);
-		payrollList.setWorkingHours(hour);
-		payrollList.setSalary(salary);
-
-		payrollDAO.insertOrUpdateLeavePermission(payrollList);
-		model.addAttribute("payrollList", payrollList);
-		return "payrollCalculation.jsp";
-	}
-
-	@PostMapping("/payscale")
+		@PostMapping("/payscale")
 	public String employeePayScale(HttpSession session,Model model) {
 		List<EmployeePayScale> employeePayScale = payrollDAO.getAllEmployeePayScales();
 		model.addAttribute("employeePayScale", employeePayScale);

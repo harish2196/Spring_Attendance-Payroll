@@ -58,5 +58,6 @@ public interface PayrollDAO {
 	public List<LeaveReport> searchLeaveReports(int empCode);
 	public int insertOrUpdateLeavePermission(PayrollList payrollList,int empCode); 
 	public void salaryPending(int empCode);
+	public boolean isSalaryCredited(int empCode);
 
 }

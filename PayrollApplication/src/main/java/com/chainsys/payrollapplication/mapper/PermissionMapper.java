@@ -19,6 +19,7 @@ public class PermissionMapper implements RowMapper<PermissionCount> {
         permissionCount.setEndTime(rs.getString("end_time"));
         permissionCount.setStatus(rs.getString("status"));
         permissionCount.setPermissionCount(rs.getString("permission"));
+        permissionCount.setInfoText(rs.getString("message_text"));
         return permissionCount;
     }
 }

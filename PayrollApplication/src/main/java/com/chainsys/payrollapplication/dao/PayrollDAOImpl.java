@@ -78,15 +78,15 @@ public class PayrollDAOImpl implements PayrollDAO {
 		int count = jdbcTemplate.queryForObject(checkPermissionQuery, Integer.class, empCode);
 
 		if (count > 0) {
-			String updatePermissionQuery = "UPDATE permission_count SET date = ?, start_time = ?, end_time = ?, status = 'waiting', permission = permission WHERE emp_code = ?";
+			String updatePermissionQuery = "UPDATE permission_count SET date = ?, start_time = ?, end_time = ?, status = 'waiting', permission = permission,message_text=? WHERE emp_code = ?";
 			jdbcTemplate.update(updatePermissionQuery, permissionCount.getDate(), permissionCount.getStartTime(),
-					permissionCount.getEndTime(), empCode);
+					permissionCount.getEndTime(),permissionCount.getInfoText(), empCode);
 			System.out.println("Permission count updated successfully.");
 		} else {
-			String insertPermissionQuery = "INSERT INTO permission_count (emp_code, name, date, start_time, end_time, permission) VALUES (?, ?, ?, ?, ?, 0)";
+			String insertPermissionQuery = "INSERT INTO permission_count (emp_code, name, date, start_time, end_time, permission,message_text) VALUES (?, ?, ?, ?, ?, 0,?)";
 			Object[] params = { empCode, permissionCount.getName(),
 					permissionCount.getDate(), permissionCount.getStartTime(),
-					permissionCount.getEndTime()};
+					permissionCount.getEndTime(),permissionCount.getInfoText()};
 			int rowsAffected = jdbcTemplate.update(insertPermissionQuery, params);
 			System.out.println("Rows Affected: " + rowsAffected);
 		}
@@ -147,7 +147,7 @@ public class PayrollDAOImpl implements PayrollDAO {
 	} 
 
 	public List<PermissionCount> getPermissionInfo(){
-		String getAllQuery = "SELECT emp_code, name, date, start_time, end_time, status, permission FROM permission_count";
+		String getAllQuery = "SELECT emp_code, name, date, start_time, end_time, status, permission,message_text FROM permission_count";
 		return jdbcTemplate.query(getAllQuery, new PermissionMapper());
 	}
 
@@ -350,7 +350,7 @@ public class PayrollDAOImpl implements PayrollDAO {
 		}
 
 		public List<PermissionCount> getPermissionStatus(int empCode){
-			String getAllQuery = "SELECT emp_code,name, date, start_time, end_time, status, permission FROM permission_count WHERE emp_code=?";
+			String getAllQuery = "SELECT emp_code,name, date, start_time, end_time, status, permission,message_text FROM permission_count WHERE emp_code=?";
 			return jdbcTemplate.query(getAllQuery, new PermissionMapper(),empCode);
 		}
 
@@ -395,6 +395,11 @@ public class PayrollDAOImpl implements PayrollDAO {
 			int rowCount = jdbcTemplate.update(updateQuery,empCode);
 		}
 
+		public boolean isSalaryCredited(int empCode) {
+		    String query = "SELECT COUNT(*) FROM employee_payscale WHERE emp_code = ? AND salary_status = 'Credited'";
+		    int count = jdbcTemplate.queryForObject(query, Integer.class, empCode);
+		    return count > 0;
+		}
 
 
 

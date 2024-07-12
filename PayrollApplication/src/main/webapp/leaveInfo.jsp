@@ -1,17 +1,15 @@
 <%@ page import="java.util.*" %>
 <%@ page import="com.chainsys.payrollapplication.model.*" %>
 <%@page import="java.util.ArrayList"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Leave Details</title>
-     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+
     <style>
-  
         table {
             width: 100%;
             border-collapse: collapse;
@@ -24,11 +22,12 @@
         }
         th {
             background-color: #f2f2f2;
+            cursor: pointer; 
         }
         tr:hover {
             background-color: #f5f5f5;   
         }
-         .accept-button {
+        .accept-button {
             background-color: #4CAF50;
             border: none;
             color: white;
@@ -55,7 +54,6 @@
         .submit-button {
             background-color: #008CBA; 
             border: none;
-        
             color: white;
             padding: 10px 20px;
             text-align: center;
@@ -67,17 +65,15 @@
             border-radius: 5px;
         }
         .accept-button:hover {
-    background-color: #45a049; 
-}
-
-.reject-button:hover {
-    background-color: #e53935;
-}
-
-.submit-button:hover {
-    background-color: #0077b3;
-}
-    input[type="submit"] {
+            background-color: #45a049; 
+        }
+        .reject-button:hover {
+            background-color: #e53935;
+        }
+        .submit-button:hover {
+            background-color: #0077b3;
+        }
+        input[type="submit"] {
             padding: 4px 10px;
             border: none;
             border-radius: 4px;
@@ -93,8 +89,8 @@
             background-color: lightgray;
             padding: 10px 5px;
             width: 39%;
-          margin-left: 27%;
-          margin-top: 3%;
+            margin-left: 27%;
+            margin-top: 3%;
             border-radius: 20px;
             overflow: hidden;
             border: none;
@@ -105,7 +101,6 @@
             float: left;
             display: block;
             color: #333;
-           
             text-align: center;
             padding: 14px 16px;
             text-decoration: none;
@@ -165,75 +160,67 @@
             display: table;
         }
 
+        .custom-dropdown-content .a1 button {
+            border: none; 
+            background: none;
+            padding: 0; 
+            font: inherit; 
+            cursor: pointer; 
+        }
 
-.custom-dropdown-content .a1 button {
-    border: none; 
-    background: none;
-    padding: 0; 
-    font: inherit; 
-    cursor: pointer; 
-}
-
-.custom-dropdown-content .a1 button:hover {
-     background-color: lightgray; 
-}
-   .logout input[type="submit"] {
-    background-color: transparent; 
-    border: none;
-    color: inherit;
-    cursor: pointer; 
-     color: lightgray;
-     margin-top:5%;
-   
-}
-        
+        .custom-dropdown-content .a1 button:hover {
+            background-color: lightgray; 
+        }
+        .logout input[type="submit"] {
+            background-color: transparent; 
+            border: none;
+            color: inherit;
+            cursor: pointer; 
+            color: lightgray;
+            margin-top:5%;
+        }
     </style>
 </head>
 <body>
 
-
-
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-      <a class="navbar-brand" href="#">I N N O W E L L</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-  
-   <div>
-<%--     <p style="color: white;margin-top:6.7%;bottom:0;margin-left=-60%">Welcome, <%= session.getAttribute("name") %></p>
- --%></div>
-
-        <li class="nav-item">
-            <a class="nav-link" href="adminDashboard.jsp">Home</a>
-          </li>                   
-          <li class="nav-item">
-            <a class="nav-link" href="joinUs.jsp">Join Us</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="contact.jsp">Contact</a>
-          </li>
-           <li class="nav-item">
-      <form action="/adminCheckOut" class="logout" method="get">
-							<a href="adminDashboard.jsp"> <input type="submit"
-								value="Logout">
-							</a>
-						</form>
-          </li>
-        </ul>
-      </div>
+        <a class="navbar-brand" href="#">I N N O W E L L</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <div>
+                </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="adminDashboard.jsp">Home</a>
+                </li>                   
+                <li class="nav-item">
+                    <a class="nav-link" href="joinUs.jsp">Join Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="contact.jsp">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <form action="/adminCheckOut" class="logout" method="get">
+                        <a href="adminDashboard.jsp"><input type="submit" value="Logout"></a>
+                    </form>
+                </li>
+            </ul>
+        </div>
     </div>
-  </nav>
-  
-    <h1 style="margin-left:35%;">Employee Leave Details</h1>
-      <form action="/searchLeave" method="post">     
-           <input style="margin-left:39%;margin-top:2%;margin-bottom:1%;" type="text" name="empcode" placeholder="Search EmpCode">      
-        <input type="submit" value="Search">
-    </form>
-   
-        <table>
+</nav>
+
+<h1 style="margin-left:35%;">Employee Leave Details</h1>
+<!-- <form action="/searchLeave" method="post">     
+    <input style="margin-left:39%;margin-top:2%;margin-bottom:1%;" type="text" name="empcode" placeholder="Search EmpCode">      
+    <input type="submit" value="Search">
+</form> -->
+
+<div class="table-responsive">
+    <table id="leaveDetailsTable" class="table table-striped table-hover">
+        <thead class="thead-dark">
             <tr>
                 <th>Employee Code</th>
                 <th>Name</th>
@@ -245,13 +232,12 @@
                 <th>Actions</th>
                 <th></th>
             </tr>
+        </thead>
+        <tbody>
             <% 
             ArrayList<LeaveReport> leaveReport  = (ArrayList<LeaveReport>) request.getAttribute("leaveReport");
             for (LeaveReport leave : leaveReport) {
-          
             %>
-           
-           
             <tr>
                 <td><%= leave.getEmpCode() %></td>
                 <td><%= leave.getName() %></td>
@@ -263,26 +249,35 @@
                 <td>
                     <form action="/leaveCount" method="post">
                         <input type="hidden" name="empCode" value="<%= leave.getEmpCode() %>">
-                         <input type="hidden" name="fromDate" value="<%= leave.getFromdate() %>">
+                        <input type="hidden" name="fromDate" value="<%= leave.getFromdate() %>">
                         <input type="hidden" name="action" value="Accepted">
                         <button class="accept-button" type="submit">Accept</button>
                     </form>
-                    <td>
+                </td>
+                <td>
                     <form action="/leaveCount" method="post">
                         <input type="hidden" name="empCode" value="<%= leave.getEmpCode() %>">
-                         <input type="hidden" name="fromDate" value="<%= leave.getFromdate() %>">
+                        <input type="hidden" name="fromDate" value="<%= leave.getFromdate() %>">
                         <input type="hidden" name="action" value="Rejected">
-                       
-                       <button class="reject-button" type="submit">Reject</button>
+                        <button class="reject-button" type="submit">Reject</button>
                     </form>
                 </td>
             </tr>
             <% 
                 }
-           
             %>
-        </table>
-        
-   
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#leaveDetailsTable').DataTable();
+    });
+</script>
+
 </body>
 </html>

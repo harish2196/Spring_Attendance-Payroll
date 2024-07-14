@@ -7,7 +7,14 @@ public class LeaveReport {
 	 String fromdate;
 	 String leaveCount;
 	 String leaveStatus;
-	 public String getLeaveCount() {
+	 String reason;
+	 public String getReason() {
+		return reason;
+	}
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+	public String getLeaveCount() {
 		return leaveCount;
 	}
 	public void setLeaveCount(String leaveCount) {

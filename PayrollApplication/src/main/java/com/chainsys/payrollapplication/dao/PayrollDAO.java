@@ -59,5 +59,8 @@ public interface PayrollDAO {
 	public int insertOrUpdateLeavePermission(PayrollList payrollList,int empCode); 
 	public void salaryPending(int empCode);
 	public boolean isSalaryCredited(int empCode);
-
+	public void permissionCountDeleteByDays(int empCode);
+	public void leaveCountDeleteByDays(int empCode);
+	public void checkInsOutsDeleteByDays(int empCode);
+	public void EmpPayscaleDeleteByDays(int empCode);
 }

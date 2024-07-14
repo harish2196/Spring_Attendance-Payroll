@@ -93,9 +93,9 @@ public class PayrollDAOImpl implements PayrollDAO {
 	}
 
 	public void insertLeaveReport(LeaveReport leaveReport, int empCode) {
-		String sql = "INSERT INTO leave_report (emp_code, name, from_date, to_date, leave_type)  VALUES (?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO leave_report (emp_code, name, from_date, to_date, leave_type,message_text)  VALUES (?, ?, ?, ?, ?, ?)";
 		Object[] params = { empCode, leaveReport.getName(), leaveReport.getFromdate(),
-				leaveReport.getTodate(), leaveReport.getLeaveType() };
+				leaveReport.getTodate(), leaveReport.getLeaveType(),leaveReport.getReason() };
 		int rowsAffected = jdbcTemplate.update(sql, params);      
 	}
 
@@ -152,7 +152,7 @@ public class PayrollDAOImpl implements PayrollDAO {
 	}
 
 	public List<LeaveReport> getAllLeaveReports() {
-		String getAllQuery = "SELECT emp_code, name, from_date, to_date, leave_type, leave_Count, status FROM Leave_report";
+		String getAllQuery = "SELECT emp_code, name, from_date, to_date, leave_type, leave_Count,message_text, status FROM Leave_report";
 		return jdbcTemplate.query(getAllQuery, new LeaveInfoMapper());
 	}
 
@@ -355,7 +355,7 @@ public class PayrollDAOImpl implements PayrollDAO {
 		}
 
 		public List<LeaveReport> getAllLeaveStatus(int empCode) {
-			String getAllQuery = "SELECT emp_code, name, from_date, to_date, leave_type, leave_Count, status FROM Leave_report WHERE emp_code=?";
+			String getAllQuery = "SELECT emp_code, name, from_date, to_date, leave_type, leave_Count,message_text status FROM Leave_report WHERE emp_code=?";
 			return jdbcTemplate.query(getAllQuery, new LeaveInfoMapper(),empCode);
 		}
 
@@ -401,8 +401,25 @@ public class PayrollDAOImpl implements PayrollDAO {
 		    return count > 0;
 		}
 
-
-
+		public void permissionCountDeleteByDays(int empCode) {
+			  String deleteQuery = "DELETE FROM permission_count WHERE emp_code = ?";
+			     int rowsAffected = jdbcTemplate.update(deleteQuery, empCode);			     
+		}
+		
+		public void leaveCountDeleteByDays(int empCode) {
+			  String deleteQuery = "DELETE FROM Leave_report WHERE emp_code = ?";
+			     int rowsAffected = jdbcTemplate.update(deleteQuery, empCode);			     
+		}
+		
+		public void checkInsOutsDeleteByDays(int empCode) {
+			  String deleteQuery = "DELETE FROM checkins_checkouts WHERE emp_code = ?";
+			     int rowsAffected = jdbcTemplate.update(deleteQuery, empCode);			     
+		}
+		
+		public void EmpPayscaleDeleteByDays(int empCode) {
+			  String deleteQuery = "DELETE FROM employee_payscale WHERE emp_code = ?";
+			     int rowsAffected = jdbcTemplate.update(deleteQuery, empCode);			     
+		}
 	}
 
 

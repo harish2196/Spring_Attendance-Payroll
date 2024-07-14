@@ -52,17 +52,17 @@
     </style>
 </head>
 <body>
- 
+ <input type="hidden" id="status" value="<%= request.getAttribute("status") %>">
     <div class="survey-form">
         <h3 style="margin-left: 32%;color: darkmagenta;font-weight: bolder;">Report Form</h3>
             <form action="/adminReport" method="post">
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" class="form-control" name="name" id="name" placeholder="Name..." pattern="[A-Za-z]{2,20}" >
+                <input type="text" class="form-control" name="name" id="name" placeholder="Name..." pattern="[A-Za-z]{2,20}" required="required" >
             </div>
             <div class="form-group">
                 <label for="comments">Your comments</label>
-                <textarea class="form-control" name="comments" id="comments" rows="4" placeholder="Write your comments here..." pattern="[a-zA-Z0-9\s]*" ></textarea>
+                <textarea class="form-control" name="comments" id="comments" rows="4" placeholder="Write your comments here..." pattern="[a-zA-Z0-9\s]*" required="required" ></textarea>
             </div>
             <div class="btn">
                 <div class="btn1">
@@ -81,5 +81,20 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script src="vendor/jquery/jquery.min.js"></script>
+	<script src="js/main.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	<script type="text/javascript">
+    var status = document.getElementById("status").value;
+    if (status === "success") {
+        Swal.fire({
+            icon: 'success',
+            title: 'Submitted!',
+            text: 'Kindly await your report'
+        });
+    }   
+    </script>
 </body>
 </html>

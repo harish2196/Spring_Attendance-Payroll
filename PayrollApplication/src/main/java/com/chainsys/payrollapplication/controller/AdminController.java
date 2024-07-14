@@ -35,24 +35,6 @@ public class AdminController {
 	
 
 
-	@PostMapping("/adminReport")
-	public String adminReport(
-			@RequestParam("name") String name,
-			@RequestParam("comments") String comments,
-			HttpSession session,
-			RedirectAttributes redirectAttributes) {
-		AdminReport adminReport=new AdminReport();
-		Validations validations=new  Validations();
-		validations.validateString(name);
-		validations.isSpecialChar(comments);
-		
-		adminReport.setName(name);
-		adminReport.setText(comments);
-
-		int empCode = (int) session.getAttribute("emp_code");	   
-		payrollDAO.insertAdminReport(adminReport,empCode);
-		return "adminReport.jsp"; 
-	}
 
 	@PostMapping("/adminLogin")
 	public String adminLogin(@RequestParam("username") String name,

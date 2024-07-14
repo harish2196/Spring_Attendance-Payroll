@@ -117,6 +117,7 @@
             title: 'Congrats!',
             text: 'Your registration was successful! Your Emp Code is: ' + empCode
         });
+        
     }   
     
     

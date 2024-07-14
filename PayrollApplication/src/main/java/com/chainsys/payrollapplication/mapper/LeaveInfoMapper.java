@@ -17,6 +17,7 @@ public class LeaveInfoMapper implements RowMapper<LeaveReport> {
 		leaveReport.setTodate(rs.getString("to_date"));
 		leaveReport.setLeaveType(rs.getString("leave_type"));
 		leaveReport.setLeaveCount(rs.getString("leave_count"));
+		leaveReport.setReason(rs.getString("message_text"));
 		leaveReport.setLeaveStatus(rs.getString("status"));
 
 		return leaveReport;

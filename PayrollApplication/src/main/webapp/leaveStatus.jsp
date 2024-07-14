@@ -192,6 +192,7 @@
                 <th>To Date</th>
                 <th>Leave Type</th>
                 <th>Leave Count</th>
+                <th>Reason</th>
                 <th>Status</th>
         
                 <th></th>
@@ -210,6 +211,7 @@
                 <td><%= leave.getTodate() %></td>
                 <td><%= leave.getLeaveType() %></td>
                 <td><%= leave.getLeaveCount() %></td>
+                  <td><%= leave.getReason() %></td>
                 <td><%= leave.getLeaveStatus() %></td>
                
             </tr>

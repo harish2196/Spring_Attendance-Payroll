@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.chainsys.payrollapplication.dao.*;
-import com.chainsys.payrollapplication.dao.PayrollDAO;
+import com.chainsys.payrollapplication.model.AdminReport;
 import com.chainsys.payrollapplication.model.EmployeePayScale;
 import com.chainsys.payrollapplication.model.Employees;
 import com.chainsys.payrollapplication.model.LeaveReport;
@@ -42,6 +42,12 @@ public class EmployeeController {
 	public String employeePayslip() {
 		return "employeePayslip.jsp"; 
 	}  
+
+	@RequestMapping("/adminReport")
+	public String admin() {
+		return "adminReport.jsp"; 
+	}  
+
 
 	@RequestMapping("/admin")
 	public String adminLog() {
@@ -84,8 +90,8 @@ public class EmployeeController {
 		}
 
 		if (payrollDAO.isUserExist(email, contact)) {
-			model.addAttribute("message", "User already exists");
-			return "registration.jsp";
+			model.addAttribute("status", "failed");
+			return "redirect:/reg";
 		}
 		Validations validations=new Validations();
 		validations.validateString(name);
@@ -191,6 +197,7 @@ public class EmployeeController {
 			@RequestParam("fromDate") String fromDate,
 			@RequestParam("toDate") String toDate,
 			@RequestParam("leaveType") String leaveType,
+			@RequestParam("reason") String message,
 			HttpSession session,
 			RedirectAttributes redirectAttributes) {
 		Validations validations=new Validations();
@@ -204,6 +211,7 @@ public class EmployeeController {
 		leaveReport.setFromdate(fromDate);
 		leaveReport.setTodate(toDate);
 		leaveReport.setLeaveType(leaveType);
+		leaveReport.setReason(message);
 		int empCode = (int) session.getAttribute("emp_code");
 
 		payrollDAO.insertLeaveReport(leaveReport,empCode);
@@ -229,6 +237,28 @@ public class EmployeeController {
 		return "leaveStatus.jsp"; 
 	}
 
+
+	@PostMapping("/adminReport")
+	public String adminReport(
+			@RequestParam("name") String name,
+			@RequestParam("comments") String comments,
+			HttpSession session,
+			RedirectAttributes redirectAttributes) {
+		AdminReport adminReport=new AdminReport();
+		Validations validations=new  Validations();
+		validations.validateString(name);
+		validations.isSpecialChar(comments);
+
+		adminReport.setName(name);
+		adminReport.setText(comments);
+
+		int empCode = (int) session.getAttribute("emp_code");	   
+		payrollDAO.insertAdminReport(adminReport,empCode);
+		redirectAttributes.addFlashAttribute("status", "success");
+		return "redirect:/adminReport"; 
+	}
+
+
 	@PostMapping("/timeSheet")
 	public String timeSheetValidation(HttpSession session,Model model) {
 		int empCode = (Integer) session.getAttribute("emp_code");
@@ -242,23 +272,43 @@ public class EmployeeController {
 		int totalCheckinCount = payrollDAO.getTotalCheckinCount(empCode);//workingDays
 		int salary= payrollDAO.getEmployeeSalary(empCode);//salary
 		payrollDAO.salaryPending(empCode); 
-
 		PayrollList payrollList=new PayrollList();
-		payrollList.setEmpCode(empCode);
-		payrollList.setEmpName(empName);
-		payrollList.setEmpEmail(empEmail);
-		payrollList.setPermissionCount(permissionCount);
-		payrollList.setSickLeaveDays(sickLeaveDays);
-		payrollList.setCasualLeaveDays(casualLeaveDays);
-		payrollList.setTotalCheckinCount(totalCheckinCount);
-		payrollList.setWorkingHours(hour);
-		payrollList.setSalary(salary);
 
-		payrollDAO.insertOrUpdateLeavePermission(payrollList);
-		model.addAttribute("payrollList", payrollList);
-		return "payrollCalculation.jsp";
+		if (totalCheckinCount > 23) {
+			payrollList.setEmpCode(empCode);
+			payrollList.setEmpName(empName);
+			payrollList.setEmpEmail(empEmail);
+			payrollList.setPermissionCount(permissionCount);
+			payrollList.setSickLeaveDays(sickLeaveDays);
+			payrollList.setCasualLeaveDays(casualLeaveDays);
+			payrollList.setTotalCheckinCount(totalCheckinCount);
+			payrollList.setWorkingHours(hour);
+			payrollList.setSalary(salary);
+
+			payrollDAO.insertOrUpdateLeavePermission(payrollList);
+			model.addAttribute("payrollList", payrollList);
+			return "payrollCalculation.jsp";
+
+		}else {
+			payrollDAO.permissionCountDeleteByDays(empCode);
+			payrollDAO.leaveCountDeleteByDays(empCode);
+			payrollDAO.checkInsOutsDeleteByDays(empCode);
+			payrollDAO.EmpPayscaleDeleteByDays(empCode);
+			payrollList.setEmpCode(empCode);
+			payrollList.setEmpName(empName);
+			payrollList.setEmpEmail(empEmail);
+			payrollList.setPermissionCount(permissionCount);
+			payrollList.setSickLeaveDays(sickLeaveDays);
+			payrollList.setCasualLeaveDays(casualLeaveDays);
+			payrollList.setTotalCheckinCount(totalCheckinCount);
+			payrollList.setWorkingHours(hour);
+			payrollList.setSalary(salary);
+
+			payrollDAO.insertOrUpdateLeavePermission(payrollList);
+			model.addAttribute("payrollList", payrollList);
+			return "payrollCalculation.jsp";
+		}
 	}
-
 
 	@PostMapping("/employeePayslip")
 	public String viewEmployeepayslip(RedirectAttributes redirectAttributes, HttpSession session, Model model) {
@@ -357,13 +407,27 @@ public class EmployeeController {
 		employeePayScale.setPayrollPermission(String.valueOf(remainPermissionCount));
 
 		model.addAttribute("employeePayScale", employeePayScale);
-
-
 		return "leaveBalance.jsp";
 
 	}
 
+	@RequestMapping("/deleteEmp")
+	public String deleteEmployee(RedirectAttributes redirectAttributes, HttpSession session, Model model) {
+		int empCode = (Integer) session.getAttribute("emp_code");
 
+		int totalCheckinCount = payrollDAO.getTotalCheckinCount(empCode);
+
+		if (totalCheckinCount >= 22) {
+			payrollDAO.permissionCountDeleteByDays(empCode);
+			payrollDAO.leaveCountDeleteByDays(empCode);
+			payrollDAO.checkInsOutsDeleteByDays(empCode);
+			payrollDAO.EmpPayscaleDeleteByDays(empCode);
+			redirectAttributes.addFlashAttribute("message", "Employee records successfully deleted.");
+			return "redirect:/home";
+		} else {
+			return "redirect:/home";
+		}
+	}
 
 
 }

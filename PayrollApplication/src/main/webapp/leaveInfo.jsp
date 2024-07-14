@@ -229,6 +229,7 @@
                 <th>Leave Type</th>
                 <th>Leave Count</th>
                 <th>Status</th>
+                <th>Reason</th>
                 <th>Actions</th>
                 <th></th>
             </tr>
@@ -245,6 +246,7 @@
                 <td><%= leave.getTodate() %></td>
                 <td><%= leave.getLeaveType() %></td>
                 <td><%= leave.getLeaveCount() %></td>
+                 <td><%= leave.getReason() %></td>
                 <td><%= leave.getLeaveStatus() %></td>
                 <td>
                     <form action="/leaveCount" method="post">

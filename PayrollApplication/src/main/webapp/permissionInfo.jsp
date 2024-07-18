@@ -216,7 +216,7 @@
     </div>
 </nav>
 
-<h1>Employee Permission Details</h1>
+<h1 style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);font-weight:bolder;">Employee Permission Details</h1>
 
 <!-- <form action="/searchPermission" method="post">
     <input style="margin-left:40%;margin-top:0.3%;margin-bottom:1%" type="text" name="empcode" placeholder="Search EmpCode">

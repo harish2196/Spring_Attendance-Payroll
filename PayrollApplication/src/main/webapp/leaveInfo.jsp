@@ -212,7 +212,8 @@
     </div>
 </nav>
 
-<h1 style="margin-left:35%;">Employee Leave Details</h1>
+<h1 style="margin-left: 35%;margin-top:1%; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">Employee Leave Details</h1>
+
 <!-- <form action="/searchLeave" method="post">     
     <input style="margin-left:39%;margin-top:2%;margin-bottom:1%;" type="text" name="empcode" placeholder="Search EmpCode">      
     <input type="submit" value="Search">
@@ -222,6 +223,7 @@
     <table id="leaveDetailsTable" class="table table-striped table-hover">
         <thead class="thead-dark">
             <tr>
+            <th>Id</th>
                 <th>Employee Code</th>
                 <th>Name</th>
                 <th>From Date</th>
@@ -240,6 +242,7 @@
             for (LeaveReport leave : leaveReport) {
             %>
             <tr>
+            <td><%= leave.getId() %></td>
                 <td><%= leave.getEmpCode() %></td>
                 <td><%= leave.getName() %></td>
                 <td><%= leave.getFromdate() %></td>
@@ -251,7 +254,9 @@
                 <td>
                     <form action="/leaveCount" method="post">
                         <input type="hidden" name="empCode" value="<%= leave.getEmpCode() %>">
-                        <input type="hidden" name="fromDate" value="<%= leave.getFromdate() %>">
+                        <input type="hidden" name="id" value="<%= leave.getId() %>">
+                          <input type="hidden" name="toDate" value="<%= leave.getTodate() %>">
+                            <input type="hidden" name="fromDate" value="<%= leave.getFromdate() %>">
                         <input type="hidden" name="action" value="Accepted">
                         <button class="accept-button" type="submit">Accept</button>
                     </form>
@@ -259,7 +264,9 @@
                 <td>
                     <form action="/leaveCount" method="post">
                         <input type="hidden" name="empCode" value="<%= leave.getEmpCode() %>">
-                        <input type="hidden" name="fromDate" value="<%= leave.getFromdate() %>">
+                        <input type="hidden" name="id" value="<%= leave.getId() %>">
+                          <input type="hidden" name="toDate" value="<%= leave.getTodate() %>">
+                            <input type="hidden" name="fromDate" value="<%= leave.getFromdate() %>">
                         <input type="hidden" name="action" value="Rejected">
                         <button class="reject-button" type="submit">Reject</button>
                     </form>

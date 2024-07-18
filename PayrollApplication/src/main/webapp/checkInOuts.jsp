@@ -5,6 +5,8 @@
 <html lang="en">
 <head>
 <title>Check-Ins</title>
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
 <style>
 body {
 	font-family: Arial, sans-serif;
@@ -74,12 +76,23 @@ a.back-btn input[type="submit"] {
 .contain{
 display:flex;
 }
+  .back-button{
+        margin-left:4.7%;
+        margin-top:2%;
+        color:firebrick;
+        font-size:18px;
+        }
 </style>
 </head>
+  <a href="adminDashboard.jsp" class="back-button">
+        <span><.Back</span> 
+    </a>
 <body>
 
 	<div class="container">
-	<div class="contain">
+	
+	 
+	<!-- <div class="contain">
 	<div class="container1">
 		<form action="/search" method="post">
 			<input type="number" name="empcode" placeholder="Search EmpCode" required="required" >
@@ -91,10 +104,10 @@ display:flex;
 			<input type="submit" value="Back" style="margin-left:26%;background-color: firebrick;">
 		</a></div>
 </div>
+ -->
+		<h2 style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">Employee Check-Ins & Check-Outs</h2>
+    <table id="leaveDetailsTable" class="table table-striped table-hover">
 
-		<h2>Employee Check-Ins & Check-Outs</h2>
-
-		<table>
 			<thead>
 				<tr>
 					<th>Employee Code</th>
@@ -127,6 +140,13 @@ display:flex;
 			</tbody>
 		</table>
 	</div>
-
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#leaveDetailsTable').DataTable();
+    });
+</script>
 </body>
 </html>

@@ -1,8 +1,14 @@
 package com.chainsys.payrollapplication.model;
 
 public class LeaveReport {
-
-	 int empCode;
+int id;
+	 public int getId() {
+	return id;
+}
+public void setId(int id) {
+	this.id = id;
+}
+	int empCode;
 	 String name;
 	 String fromdate;
 	 String leaveCount;

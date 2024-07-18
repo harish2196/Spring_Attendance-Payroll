@@ -201,9 +201,7 @@
             ArrayList<LeaveReport> leaveReport  = (ArrayList<LeaveReport>) request.getAttribute("leaveReport");
             for (LeaveReport leave : leaveReport) {
           
-            %>
-           
-           
+            %>         
             <tr>
                 <td><%= leave.getEmpCode() %></td>
                 <td><%= leave.getName() %></td>

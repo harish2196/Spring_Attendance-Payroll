@@ -226,7 +226,6 @@ public class EmployeeController {
 		ArrayList<PermissionCount> permissionCount = new ArrayList<>(payrollDAO.getPermissionStatus(empCode));
 		model.addAttribute("permissionCount", permissionCount);
 		return "permissionStatus.jsp"; 
-
 	}
 
 	@PostMapping("/viewLeave")
@@ -265,7 +264,7 @@ public class EmployeeController {
 
 		String empName=payrollDAO.getEmployeeName(empCode);//name
 		int hour=payrollDAO.getTotalWorkingHours(empCode);//hour
-		String empEmail= payrollDAO.getEmployeeEmail(empCode);//email
+		String empEmail= payrollDAO.getEmployeeEmail(empCode);//email		
 		int permissionCount = payrollDAO.countPermissionsPayroll(empCode);//permission
 		int sickLeaveDays = payrollDAO.countSickLeavePayroll(empCode);//sick
 		int casualLeaveDays = payrollDAO.countCasualLeavePayroll(empCode);//casual
@@ -274,7 +273,11 @@ public class EmployeeController {
 		payrollDAO.salaryPending(empCode); 
 		PayrollList payrollList=new PayrollList();
 
-		if (totalCheckinCount > 23) {
+		if (totalCheckinCount > 22) {
+			payrollDAO.permissionCountDeleteByDays(empCode);
+			payrollDAO.leaveCountDeleteByDays(empCode);
+			payrollDAO.checkInsOutsDeleteByDays(empCode);
+			payrollDAO.EmpPayscaleDeleteByDays(empCode);
 			payrollList.setEmpCode(empCode);
 			payrollList.setEmpName(empName);
 			payrollList.setEmpEmail(empEmail);
@@ -284,16 +287,12 @@ public class EmployeeController {
 			payrollList.setTotalCheckinCount(totalCheckinCount);
 			payrollList.setWorkingHours(hour);
 			payrollList.setSalary(salary);
-
 			payrollDAO.insertOrUpdateLeavePermission(payrollList);
 			model.addAttribute("payrollList", payrollList);
 			return "payrollCalculation.jsp";
 
 		}else {
-			payrollDAO.permissionCountDeleteByDays(empCode);
-			payrollDAO.leaveCountDeleteByDays(empCode);
-			payrollDAO.checkInsOutsDeleteByDays(empCode);
-			payrollDAO.EmpPayscaleDeleteByDays(empCode);
+
 			payrollList.setEmpCode(empCode);
 			payrollList.setEmpName(empName);
 			payrollList.setEmpEmail(empEmail);
@@ -374,7 +373,6 @@ public class EmployeeController {
 
 		model.addAttribute("employeePayScale", employeePayScale);
 		model.addAttribute("dailySalary", dailySalary);
-		System.err.println("--->"+dailySalary);
 		model.addAttribute("grossSalary", (int) checkinsSalary);
 		model.addAttribute("pfDeduction", pfDeduction);
 		model.addAttribute("netPay", netPay);
@@ -411,23 +409,7 @@ public class EmployeeController {
 
 	}
 
-	@RequestMapping("/deleteEmp")
-	public String deleteEmployee(RedirectAttributes redirectAttributes, HttpSession session, Model model) {
-		int empCode = (Integer) session.getAttribute("emp_code");
-
-		int totalCheckinCount = payrollDAO.getTotalCheckinCount(empCode);
-
-		if (totalCheckinCount >= 22) {
-			payrollDAO.permissionCountDeleteByDays(empCode);
-			payrollDAO.leaveCountDeleteByDays(empCode);
-			payrollDAO.checkInsOutsDeleteByDays(empCode);
-			payrollDAO.EmpPayscaleDeleteByDays(empCode);
-			redirectAttributes.addFlashAttribute("message", "Employee records successfully deleted.");
-			return "redirect:/home";
-		} else {
-			return "redirect:/home";
-		}
-	}
+	
 
 
 }

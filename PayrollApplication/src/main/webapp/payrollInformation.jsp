@@ -180,9 +180,9 @@
         <input type="hidden" name="permissionCount" value="<%= employeePayScale.getPayrollPermission() %>">
         <input type="hidden" name="sickLeaveDays" value="<%= employeePayScale.getSickLeaveDays() %>">
         <input type="hidden" name="casualLeaveDays" value="<%= employeePayScale.getCasualLeaveDays() %>">
-                <input type="hidden" name="permissionPayroll" value="<%= employeePayScale.getPermissionPayscale() %>">
-                <input type="hidden" name="casualPayroll" value="<%= employeePayScale.getCasualLeavePayscale() %>">
-                <input type="hidden" name="sickPayroll" value="<%= employeePayScale.getSickLeavePayscale() %>">
+        <input type="hidden" name="permissionPayroll" value="<%= employeePayScale.getPermissionPayscale() %>">
+         <input type="hidden" name="casualPayroll" value="<%= employeePayScale.getCasualLeavePayscale() %>">
+        <input type="hidden" name="sickPayroll" value="<%= employeePayScale.getSickLeavePayscale() %>">
         <input type="hidden" name="grossSalary" value="<%= grossSalary %>">
         <input type="hidden" name="pfDeduction" value="<%= String.format("%.2f", pfDeduction) %>">
         <input type="hidden" name="netPay" value="<%= String.format("%.2f", netPay) %>">

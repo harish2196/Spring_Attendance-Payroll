@@ -34,8 +34,6 @@ public class AdminController {
 	PayrollDAO payrollDAO;
 	
 
-
-
 	@PostMapping("/adminLogin")
 	public String adminLogin(@RequestParam("username") String name,
 			@RequestParam("password") String password,
@@ -140,7 +138,6 @@ public class AdminController {
 	@GetMapping("/comments")
 	public String adminReport(Model model) {
 		List<AdminReport> adminReport = payrollDAO.getComments(); 
-
 		model.addAttribute("adminReport", adminReport); 
 		return "comment.jsp"; 
 	}
@@ -198,17 +195,16 @@ public class AdminController {
 
 	@PostMapping("/leaveCount")
 	public String leaveStatus(@RequestParam("empCode") int empCode,
-			@RequestParam("action") String action,@RequestParam("fromDate") String fromDate,
+			@RequestParam("action") String action,@RequestParam("id") int id,@RequestParam("toDate") String toDate,@RequestParam("fromDate") String fromDate,
 			Model model) {
 		if (action != null) {
 			if (action.equalsIgnoreCase("rejected")) {
-				int totalLeaveDays = payrollDAO.remainRejectLeaveDays(empCode);
-				payrollDAO.insertTotalLeaveDays(empCode, totalLeaveDays);
-				payrollDAO.updateLeaveStatus(empCode,"Rejected");	                 
+				 payrollDAO.getTotalLeaveDays(id, toDate, fromDate);
+				payrollDAO.updateLeaveStatus(id,"Rejected");	  
 			} else if (action.equalsIgnoreCase("accepted")) {    	 
-				int totalLeaveDays = payrollDAO.getTotalLeaveDays(empCode);
-				payrollDAO.insertTotalLeaveDays(empCode, totalLeaveDays);
-				payrollDAO.updateLeaveStatus(empCode, "Accepted");
+				int totalLeaveDays = payrollDAO.getTotalLeaveDays(id,toDate,fromDate);
+				payrollDAO.insertTotalLeaveDays(id, totalLeaveDays);
+				payrollDAO.updateLeaveStatus(id, "Accepted");
 			}
 		}
 

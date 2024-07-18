@@ -31,9 +31,9 @@ public interface PayrollDAO {
 	public List<PermissionCount> getPermissionInfo();
 	public List<LeaveReport> getAllLeaveReports();
 	public boolean updatePermissionStatus(int empcode, String status); 
-	public int remainRejectLeaveDays(int empCode);
+//	public int remainRejectLeaveDays(int id);
 	public boolean insertTotalLeaveDays(int empCode, int totalLeaveDays);
-	public int getTotalLeaveDays(int empCode) ;
+	public int getTotalLeaveDays(int id, String toDate, String fromDate);
 	public boolean updateLeaveStatus(int empCode, String status);
 	public List<CheckInsAndCheckOuts> getEmployeeCheckInOut(int empCode);
 	public int getTotalWorkingHours(int empCode); 

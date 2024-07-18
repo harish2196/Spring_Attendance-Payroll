@@ -11,6 +11,7 @@ public class LeaveInfoMapper implements RowMapper<LeaveReport> {
 	@Override
 	public LeaveReport mapRow(ResultSet rs, int rowNum) throws SQLException {
 		LeaveReport leaveReport = new LeaveReport();
+		leaveReport.setId(rs.getInt("id"));
 		leaveReport.setEmpCode(rs.getInt("emp_code"));
 		leaveReport.setName(rs.getString("name"));
 		leaveReport.setFromdate(rs.getString("from_date"));

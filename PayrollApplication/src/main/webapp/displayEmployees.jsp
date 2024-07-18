@@ -11,6 +11,10 @@
 <title>Employee Personal Details</title>
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <style>
 body {
 	font-family: Arial, sans-serif;
@@ -86,19 +90,28 @@ tr:hover {
 	color: lightgray;
 	margin-top: 10%;
 }
+
 .btn-custom {
-    background-color: #4F7942; 
-    color: white;
-    border: none;
-    padding: 3.4px 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+	background-color: #4F7942;
+	color: white;
+	border: none;
+	padding: 3.4px 10px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
 }
 
 .btn-custom:hover {
-    background-color: #808000; 
+	background-color: #808000;
 }
 
+h1 {
+	text-align: center;
+	margin-bottom: 20px;
+	font-weight:bolder;
+	color: #2c3e50;
+	font-size: 2.5em;
+	text-shadow: 2px 3px 4px rgba(0, 0, 0, 0.3);
+}
 </style>
 </head>
 <body>
@@ -127,8 +140,7 @@ tr:hover {
 					</li>
 					<li class="nav-item">
 						<form action="/adminCheckOut" class="logout" method="get">
-							<a href="login.jsp"> <input type="submit"
-								value="Logout">
+							<a href="login.jsp"> <input type="submit" value="Logout">
 							</a>
 						</form>
 					</li>
@@ -138,15 +150,15 @@ tr:hover {
 	</nav>
 
 	<div class="container" style="margin-top: 20px;">
-		<h1 style="text-align: center; margin-bottom: 20px;">Employee
-			Personal Details</h1>
-			
-			  <form action="/employeeSearch" method="post">  
-         <input style="margin-left:38.5%;margin-bottom:2%" type="text" name="empcode" placeholder="Search EmpCode">      
-      <input type="submit" value="Search" class="btn-custom">
-    </form>
-			
-		<table class="table">
+		<h1>Employee Personal Details</h1>
+
+		<!-- 	<form action="/employeeSearch" method="post">
+			<input style="margin-left: 38.5%; margin-bottom: 2%" type="text"
+				name="empcode" placeholder="Search EmpCode"> <input
+				type="submit" value="Search" class="btn-custom">
+		</form> -->
+
+		<table id="leaveDetailsTable" class="table table-striped table-hover">
 			<thead class="thead-dark">
 				<tr>
 					<th>Employee Code</th>
@@ -154,7 +166,6 @@ tr:hover {
 					<th>Designation</th>
 					<th>Email</th>
 					<th>Mobile</th>
-					<!-- <th>Profile</th>  -->
 					<th>Salary</th>
 					<th>Actions</th>
 				</tr>
@@ -168,13 +179,12 @@ tr:hover {
                 	byte[] image=employee.getImageData();
             %>
 				<tr>
-					<td><%= employee.getEmpCode() %></td>					
+					<td><%= employee.getEmpCode() %></td>
 					<td><%= employee.getUserName() %></td>
 					<td><%= employee.getDesignation() %></td>
 					<td><%= employee.getUserEmail() %></td>
 					<td><%= employee.getUserMobile() %></td>
-<%-- 					<td><img src="data:image/jpeg;base64,<%= Base64.getEncoder().encodeToString(image) %>"></td> 
- --%>					<td><%= employee.getSalary() %></td>
+					<td><%= employee.getSalary() %></td>
 					<td><a class="btn btn-primary"
 						href="updatePage.jsp?id=<%= employee.getEmpCode() %>&name=<%= employee.getUserName()%>&designation=<%= employee.getDesignation() %>&email=<%= employee.getUserEmail() %>&mobile=<%= employee.getUserMobile() %>&salary=<%= employee.getSalary() %>">Update</a>
 						<form action="/delete" method="post"
@@ -195,6 +205,15 @@ tr:hover {
 			</tbody>
 		</table>
 	</div>
-
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script
+		src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+	<script
+		src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+	<script>
+    $(document).ready(function() {
+        $('#leaveDetailsTable').DataTable();
+    });
+</script>
 </body>
 </html>

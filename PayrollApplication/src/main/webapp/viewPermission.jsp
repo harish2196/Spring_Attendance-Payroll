@@ -4,8 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>   
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Permission Form</title>
     </head>
@@ -47,16 +46,18 @@
             box-sizing: border-box;
         }
 
-        .form-container input[type="submit"] {
-            background-color:  rgb(59, 43, 230);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            width: 100%;
-            text-align: center;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+     .form-container input[type="submit"] {
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    width: 100%;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); 
+}
+
 
         .form-container input[type="submit"]:hover {
             background-color: darkolivegreen;
@@ -73,6 +74,9 @@
             border-radius: 4px;
             background-color:firebrick ;
             color: white;
+              width: 100%;
+             cursor: pointer;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); 
             font-size: 16px;
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
@@ -92,13 +96,14 @@
     <div class="photo">
         <div class="form-container">
             <form action="/registerPermission" method="post" onsubmit="return validateTimes()">
-                <h2 style="margin-left:70px;">Permission Form</h2>
+               <h2 style="margin-left: 70px; text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);">Permission Form</h2>
+
                
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" pattern="[A-Za-z]{2,20}" required>
 
                 <label for="date">Date:</label>
-                <input type="date" id="date" name="date" required min="2024-07-08" max="2024-07-31">
+                <input type="date" id="date" name="date" required min="2024-07-17" max="2024-07-31">
                 
                 <label for="start_time">Start Time:</label>
                 <input type="time" id="start_time" name="start_time" required>

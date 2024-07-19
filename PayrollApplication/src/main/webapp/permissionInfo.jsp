@@ -39,7 +39,7 @@
 
         th {
             background-color: #f2f2f2;
-            cursor: pointer; /* Add cursor pointer to indicate sortability */
+            cursor: pointer; 
         }
 
         tr:hover {
@@ -86,7 +86,7 @@
         }
 
         .reject-button {
-            background-color: #dc3545; /* Bootstrap red */
+            background-color: #dc3545; 
             color: white;
             padding: 10px 20px;
             text-align: center;
@@ -100,7 +100,7 @@
         }
 
         .reject-button:hover {
-            background-color: #c82333; /* Darker red for hover */
+            background-color: #c82333; 
         }
 
         .custom-nav {

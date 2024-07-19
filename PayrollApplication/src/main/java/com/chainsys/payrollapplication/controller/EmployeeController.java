@@ -30,32 +30,58 @@ public class EmployeeController {
 
 	@RequestMapping("/reg")
 	public String showRegistrationForm() {
-		return "registration.jsp"; 
+		return "registration"; 
 	}  
 
 	@RequestMapping("/log")
 	public String showLogIn() {
-		return "login.jsp"; 
+		return "login"; 
+	}  
+	
+	@RequestMapping("/joinUs")
+	public String showJoinUs() {
+		return "joinUs"; 
 	}  
 
+	@RequestMapping("/contact")
+	public String showContact() {
+		return "contact"; 
+	}  
+	
+	@RequestMapping("/permission")
+	public String applyPermission() {
+		return "permission"; 
+	}  
+	
+	@RequestMapping("/leave")
+	public String applyLeave() {
+		return "leave"; 
+	} 
+	
+	@RequestMapping("/getPermission")
+	public String viewPermissionStatus() {
+		return "permissionStatus"; 
+	} 
+	
+	@RequestMapping("/getLeave")
+	public String viewLeaveStatus() {
+		return "leaveStatus"; 
+	} 
+	
+	@RequestMapping("/report")
+	public String admin() {
+		return "adminReport"; 
+	}  
+	
 	@RequestMapping("/approvedpayslip")
 	public String employeePayslip() {
 		return "employeePayslip.jsp"; 
 	}  
 
-	@RequestMapping("/adminReport")
-	public String admin() {
-		return "adminReport.jsp"; 
-	}  
-
-
-	@RequestMapping("/admin")
-	public String adminLog() {
-		return "adminLogin.jsp"; 
-	}  
+	
 	@RequestMapping("/home")
 	public String homePage() {
-		return "home.jsp"; 
+		return "home"; 
 	} 
 
 	@RequestMapping("/permissionPage")
@@ -68,57 +94,47 @@ public class EmployeeController {
 		return "leave.jsp"; 
 	}  
 
-	@PostMapping("/register")
-	public String registerFormSubmission(
-			@RequestParam("name") String name,
-			@RequestParam("role") String role,
-			@RequestParam("email") String email,
-			@RequestParam("contact") String contact,
-			@RequestParam("pass") String password,
-			@RequestParam("image") MultipartFile imageFile,
-			RedirectAttributes redirectAttributes,
-			Model model) {	
+	@RequestMapping("/employeeTimesheet")
+	public String timesheet() {
+		return "payrollCalculation"; 
+	}  
+	
+    @PostMapping("/register")
+    public String registerFormSubmission(
+            @RequestParam("name") String name,
+            @RequestParam("role") String role,
+            @RequestParam("email") String email,
+            @RequestParam("contact") String contact,
+            @RequestParam("pass") String password,
+            @RequestParam("image") MultipartFile imageFile,
+            RedirectAttributes redirectAttributes,
+            Model model) throws IOException {
 
-		byte[] image = null;
-		if (!imageFile.isEmpty()) {
-			try {
-				image = imageFile.getBytes();
-			} catch (IOException e) {
-				e.printStackTrace();
-				return "error"; 
-			}
-		}
+        byte[] image = imageFile.getBytes();
 
-		if (payrollDAO.isUserExist(email, contact)) {
-			model.addAttribute("status", "failed");
-			return "redirect:/reg";
-		}
-		Validations validations=new Validations();
-		validations.validateString(name);
-		validations.validateString(role);
-		validations.isEmailChecker(email);
-		validations.isPhoneNumber(contact);
-		validations.isPassword(password);
+        if (payrollDAO.isUserExist(email, contact)) {
+            model.addAttribute("status", "failed");
+            return "redirect:/reg";
+        }
 
+        Employees employees = new Employees();
+        employees.setUserName(name);
+        employees.setDesignation(role);
+        employees.setUserEmail(email);
+        employees.setUserMobile(contact);
+        employees.setUserPassword(password);
+        employees.setImageData(image);
 
-		Employees employees = new Employees();
-		employees.setUserName(name);
-		employees.setDesignation(role);
-		employees.setUserEmail(email);
-		employees.setUserMobile(contact);
-		employees.setUserPassword(password);
-		employees.setImageData(image);
+        int randomNumber = 1000 + (int) (Math.random() * 9000);
+        employees.setEmpCode(randomNumber);
 
-		int randomNumber = 1000 + (int) (Math.random() * 9000);
-		employees.setEmpCode(randomNumber);
+        payrollDAO.insertEmployee(employees);
 
-		payrollDAO.insertEmployee(employees);
+        redirectAttributes.addFlashAttribute("status", "success");
+        redirectAttributes.addFlashAttribute("randomNumber", randomNumber);
 
-		redirectAttributes.addFlashAttribute("status", "success");
-		redirectAttributes.addFlashAttribute("randomNumber", randomNumber);
-
-		return "redirect:/reg";
-	}
+        return "redirect:/reg"; 
+    }
 
 
 	@PostMapping("/login")
@@ -144,7 +160,7 @@ public class EmployeeController {
 			session.setAttribute("username", name);
 			session.setAttribute("emp_code", empCode); 
 			payrollDAO.insertCheckInTime(empCode, name);
-			return "redirect:/home.jsp"; 
+			return "redirect:/home"; 
 		} else {
 
 			redirectAttributes.addFlashAttribute("status", "failed");
@@ -188,7 +204,7 @@ public class EmployeeController {
 
 		payrollDAO.insertPermission(permissionCount,empCode);
 		redirectAttributes.addFlashAttribute("status", "success");
-		return "redirect:/permissionPage";
+		return "redirect:/permission";
 	}
 
 	@PostMapping("/leave")
@@ -217,15 +233,15 @@ public class EmployeeController {
 		payrollDAO.insertLeaveReport(leaveReport,empCode);
 		redirectAttributes.addFlashAttribute("status", "success");
 
-		return "redirect:/leavePage";
+		return "redirect:/leave";
 	}
 
 	@PostMapping("/viewPermission")
-	public String permissionStatus(Model model,HttpSession session) {
-		int empCode = (Integer) session.getAttribute("emp_code");
-		ArrayList<PermissionCount> permissionCount = new ArrayList<>(payrollDAO.getPermissionStatus(empCode));
-		model.addAttribute("permissionCount", permissionCount);
-		return "permissionStatus.jsp"; 
+	public String permissionStatus(Model model, HttpSession session) {
+	    int empCode = (Integer) session.getAttribute("emp_code");
+	    ArrayList<PermissionCount> permissionCount = new ArrayList<>(payrollDAO.getPermissionStatus(empCode));
+	    model.addAttribute("permissionCount", permissionCount);
+	    return "forward:/getPermission";
 	}
 
 	@PostMapping("/viewLeave")
@@ -233,7 +249,7 @@ public class EmployeeController {
 		int empCode = (Integer) session.getAttribute("emp_code");
 		ArrayList<LeaveReport> leaveReport = new ArrayList<>(payrollDAO.getAllLeaveStatus(empCode));
 		model.addAttribute("leaveReport", leaveReport);
-		return "leaveStatus.jsp"; 
+		 return "forward:/getLeave";
 	}
 
 
@@ -254,7 +270,7 @@ public class EmployeeController {
 		int empCode = (int) session.getAttribute("emp_code");	   
 		payrollDAO.insertAdminReport(adminReport,empCode);
 		redirectAttributes.addFlashAttribute("status", "success");
-		return "redirect:/adminReport"; 
+		return "redirect:/report"; 
 	}
 
 
@@ -289,7 +305,7 @@ public class EmployeeController {
 			payrollList.setSalary(salary);
 			payrollDAO.insertOrUpdateLeavePermission(payrollList);
 			model.addAttribute("payrollList", payrollList);
-			return "payrollCalculation.jsp";
+			return "payrollCalculation";
 
 		}else {
 
@@ -305,7 +321,7 @@ public class EmployeeController {
 
 			payrollDAO.insertOrUpdateLeavePermission(payrollList);
 			model.addAttribute("payrollList", payrollList);
-			return "payrollCalculation.jsp";
+			return "payrollCalculation";
 		}
 	}
 
@@ -378,7 +394,7 @@ public class EmployeeController {
 		model.addAttribute("netPay", netPay);
 		model.addAttribute("salary", allocateSalary);
 
-		return "employeePayslip.jsp";
+		return "employeePayslip";
 	}
 
 	@PostMapping("/absence")
@@ -405,7 +421,7 @@ public class EmployeeController {
 		employeePayScale.setPayrollPermission(String.valueOf(remainPermissionCount));
 
 		model.addAttribute("employeePayScale", employeePayScale);
-		return "leaveBalance.jsp";
+		return "balanceLeave";
 
 	}
 

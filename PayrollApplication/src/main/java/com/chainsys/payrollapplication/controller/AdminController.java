@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -32,8 +33,42 @@ public class AdminController {
 
 	@Autowired
 	PayrollDAO payrollDAO;
-	
 
+	@RequestMapping("/admin")
+	public String adminLog() {
+		return "adminLogin"; 
+	}  
+
+	@RequestMapping("/homePageAdmin")
+	public String adminHome() {
+		return "adminDashboard"; 
+	}  
+
+	@RequestMapping("/viewEmployees")
+	public String getAllEmp() {
+		return "viewEmployees"; 
+	} 
+
+	@RequestMapping("/updatePage")
+	public String updateEmployee() {
+		return "updateEmployee"; 
+	} 
+	
+	@RequestMapping("/checkInsOuts")
+	public String employeeCheckInsouts() {
+		return "checkInsOuts"; 
+	} 
+	
+	@RequestMapping("/adminChoice")
+	public String adminSwitch() {
+		return "adminChoice"; 
+	}
+	
+	@RequestMapping("/employeePayslip")
+	public String payslip() {
+		return "employeePayscale"; 
+	}
+	
 	@PostMapping("/adminLogin")
 	public String adminLogin(@RequestParam("username") String name,
 			@RequestParam("password") String password,
@@ -52,10 +87,10 @@ public class AdminController {
 
 				if (password.equals("1234")) {
 					redirectAttributes.addFlashAttribute("specialAccess", true);
-					return "redirect:/adminDashboard.jsp"; 
+					return "redirect:/homePageAdmin"; 
 				} else {
 					redirectAttributes.addFlashAttribute("status", "failed");
-					return "redirect:/admin"; 
+					//return "redirect:/admin"; 
 				}
 			}
 		} catch (Exception e) {
@@ -80,11 +115,10 @@ public class AdminController {
 
 
 	@GetMapping("/getEmployeeDetails")
-	public String getEmployeeDeatils(Model model) {
-		List<Employees> employee = payrollDAO.viewEmployeeDetails(); 
-
-		model.addAttribute("employee", employee);
-		return "displayEmployees.jsp"; 
+	public String getEmployeeDetails(Model model) {
+		List<Employees> employees = payrollDAO.viewEmployeeDetails();
+		model.addAttribute("employeeList", employees); 
+		return "viewEmployees"; 
 	}
 
 	@GetMapping("/checkInOut")
@@ -92,7 +126,7 @@ public class AdminController {
 		List<CheckInsAndCheckOuts> checkInsAndCheckOuts = payrollDAO.viewCheckInsAndOuts(); 
 
 		session.setAttribute("checkInsAndCheckOuts", checkInsAndCheckOuts); 
-		return "checkInOuts.jsp"; 
+		return  "redirect:/checkInsOuts";
 	}
 
 	@PostMapping("/update")
@@ -110,7 +144,7 @@ public class AdminController {
 		validations.isEmailChecker(email);
 		validations.isPhoneNumber(phoneNumber);
 		validations.isNumerics(salary);
-		
+
 		Employees employee = new Employees();
 		employee.setEmpCode(id);
 		employee.setUserName(name);
@@ -120,8 +154,8 @@ public class AdminController {
 		employee.setSalary(salary);
 		payrollDAO.updateEmployeeDetails(employee);
 		List<Employees> updatedEmployeeList = payrollDAO.viewEmployeeDetails();
-		model.addAttribute("employee", updatedEmployeeList);
-		return "displayEmployees.jsp"; 
+		model.addAttribute("employeeList", updatedEmployeeList);
+		return "viewEmployees"; 
 	}
 
 	@PostMapping("/delete")
@@ -129,18 +163,18 @@ public class AdminController {
 
 		payrollDAO.deleteEmployeeById(id);
 		List<Employees> updatedEmployeeList = payrollDAO.viewEmployeeDetails(); 
-		model.addAttribute("employee", updatedEmployeeList);
-		return "displayEmployees.jsp"; 
+		model.addAttribute("employeeList", updatedEmployeeList);
+		return "viewEmployees"; 
 
 	}
-
 
 	@GetMapping("/comments")
 	public String adminReport(Model model) {
-		List<AdminReport> adminReport = payrollDAO.getComments(); 
-		model.addAttribute("adminReport", adminReport); 
-		return "comment.jsp"; 
+	    List<AdminReport> adminReport = payrollDAO.getComments(); 
+	    model.addAttribute("adminReport", adminReport); 
+	    return "reportList";   
 	}
+
 
 	@PostMapping("/reportSearch")  
 	public String getEmployeeReports(@RequestParam("empcode") int empCode,Model model) {
@@ -156,11 +190,11 @@ public class AdminController {
 			if ("permission".equalsIgnoreCase(option)) {
 				ArrayList<PermissionCount> permissionCount = new ArrayList<>(payrollDAO.getPermissionInfo());
 				model.addAttribute("permissionCount", permissionCount);
-				return "permissionInfo.jsp"; 
+				return "permissionInfo"; 
 			} else if ("Leave".equalsIgnoreCase(option)) {
 				ArrayList<LeaveReport> leaveReport = new ArrayList<>(payrollDAO.getAllLeaveReports());
 				model.addAttribute("leaveReport", leaveReport);
-				return "leaveInfo.jsp"; 
+				return "leaveInfo"; 
 			} else {
 				return "hello.jsp"; 
 			}
@@ -177,12 +211,7 @@ public class AdminController {
 
 		if (status != null) {
 			try {
-				boolean isSuccess = payrollDAO.updatePermissionStatus(empCode, status);
-				if (isSuccess) {
-					System.out.println("Permission status updated successfully.");
-				} else {
-					System.out.println("Failed to update permission status.");
-				}
+				boolean isSuccess = payrollDAO.updatePermissionStatus(empCode, status);			
 			} catch (Exception e) {
 				System.out.println(e.getMessage());				
 			}
@@ -190,7 +219,7 @@ public class AdminController {
 
 		List<PermissionCount> permissionCount = payrollDAO.getPermissionInfo(); 
 		model.addAttribute("permissionCount", permissionCount);
-		return "permissionInfo.jsp"; 
+		return "permissionInfo"; 
 	}
 
 	@PostMapping("/leaveCount")
@@ -199,7 +228,7 @@ public class AdminController {
 			Model model) {
 		if (action != null) {
 			if (action.equalsIgnoreCase("rejected")) {
-				 payrollDAO.getTotalLeaveDays(id, toDate, fromDate);
+				payrollDAO.getTotalLeaveDays(id, toDate, fromDate);
 				payrollDAO.updateLeaveStatus(id,"Rejected");	  
 			} else if (action.equalsIgnoreCase("accepted")) {    	 
 				int totalLeaveDays = payrollDAO.getTotalLeaveDays(id,toDate,fromDate);
@@ -210,21 +239,21 @@ public class AdminController {
 
 		ArrayList<LeaveReport> leaveReport = new ArrayList<>(payrollDAO.getAllLeaveReports());
 		model.addAttribute("leaveReport", leaveReport);
-		return "leaveInfo.jsp"; 		
+		return "leaveInfo"; 		
 	}
 
-	@PostMapping("/search")   //checkInout search
+	@PostMapping("/search")   
 	public String retrieveAllEmployees(@RequestParam("empcode") int empCode,HttpSession session) {
 		ArrayList<CheckInsAndCheckOuts> checkInsAndCheckOuts= (ArrayList<CheckInsAndCheckOuts>) payrollDAO.getEmployeeCheckInOut(empCode);	
 		session.setAttribute("checkInsAndCheckOuts", checkInsAndCheckOuts); 
 		return "checkInOuts.jsp"; 
 	}
 
-		@PostMapping("/payscale")
+	@GetMapping("/payscale")
 	public String employeePayScale(HttpSession session,Model model) {
 		List<EmployeePayScale> employeePayScale = payrollDAO.getAllEmployeePayScales();
 		model.addAttribute("employeePayScale", employeePayScale);
-		return "employeePayscale.jsp";
+		return "employeePayscale";
 	}
 
 
@@ -288,7 +317,6 @@ public class AdminController {
 			employeePayScale.setCasualLeavePayscale(fullDayDeduction);
 		}
 
-
 		employeePayScale.setSalary((int)salary);		
 		employeePayScale.setGrossPay(checkinsSalary);
 		double pfDeduction = checkinsSalary * 0.12;
@@ -304,7 +332,7 @@ public class AdminController {
 		model.addAttribute("pfDeduction", pfDeduction);
 		model.addAttribute("netPay", netPay);
 		model.addAttribute("salary", salary);
-		return "payrollInformation.jsp";
+		return "payslipcalculation";
 	}
 
 	@PostMapping("/SalarySlip")
@@ -366,8 +394,7 @@ public class AdminController {
 		}
 
 		List<EmployeePayScale> employeePayScale = payrollDAO.getAllEmployeePayScales();
-		model.addAttribute("employeePayScale", employeePayScale);
-		return "employeePayscale.jsp";
+		return "redirect:/payscale"; 
 	}
 
 	@PostMapping("/employeeSearch")  
@@ -398,7 +425,7 @@ public class AdminController {
 		return "leaveInfo.jsp"; 
 	}
 
-	
-	
-	
+
+
+
 }

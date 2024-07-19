@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Payslip</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .payroll-table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .payroll-table th, .payroll-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .payroll-table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .payroll-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .payroll-table tr:hover {
+            background-color: #ddd;
+        }
+        .header, .footer {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            border: 1px solid #ddd;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0px 0px 10px #ddd;
+        }
+        .company-details {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .company-details img {
+            width: 150px;
+            height: auto;
+            margin-bottom: 1.5%;
+        }
+        .company-details p {
+            margin: 0;
+        }
+        .header {
+            font-size: 24px;
+            color: #4CAF50;
+        }
+        .footer {
+            margin-top: 20px;
+            color: #777;
+        }
+        .email-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            margin-left: -4%;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .email-button:hover {
+            background-color: #45a049;
+        }
+        .email-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="company-details">
+        <img src="images/a6.png" alt="Company Logo">
+        <p>101, Test Tower A.R. Street,<br> Bengaluru-400896, Karnataka, India<br> Tel: +123-456-7890, email: innowell@xyz.com</p>
+    </div>
+
+    <h2 class="header">SALARY SLIP</h2>
+    
+    <table class="payroll-table">
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>EmpCode</td>
+                <td th:text="${employeePayScale.empCode}"></td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td th:text="${employeePayScale.username}"></td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td th:text="${employeePayScale.userEmail}"></td>
+            </tr>
+            <tr>
+                <td>Working Days</td>
+                <td th:text="${employeePayScale.workingDays}"></td>
+            </tr>
+            <tr>
+                <td>Daily Payscale</td>
+                <td th:text="${#numbers.formatDecimal(dailySalary, 2, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            <tr>
+                <td>Permission Count</td>
+                <td th:text="${employeePayScale.payrollPermission}"></td>
+            </tr>
+            <tr>
+                <td>Sick Leave Days</td>
+                <td th:text="${employeePayScale.sickLeaveDays}"></td>
+            </tr>
+            <tr>
+                <td>Casual Leave Days</td>
+                <td th:text="${employeePayScale.casualLeaveDays}"></td>
+            </tr>
+            <tr>
+                <td>Permission Deduction</td>
+                <td th:text="${#numbers.formatDecimal(employeePayScale.permissionPayscale, 2, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            <tr>
+                <td>Sick Deduction</td>
+                <td th:text="${#numbers.formatDecimal(employeePayScale.sickLeavePayscale, 2, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            <tr>
+                <td>Casual Deduction</td>
+                <td th:text="${#numbers.formatDecimal(employeePayScale.casualLeavePayscale, 2, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            <tr>
+                <td>Gross Pay</td>
+                <td th:text="${grossSalary}"></td>
+            </tr>
+            <tr>
+                <td>Pf Deduction</td>
+                <td th:text="${#numbers.formatDecimal(pfDeduction, 2, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            <tr>
+                <td>Net Pay</td>
+                <td th:text="${#numbers.formatDecimal(netPay, 2, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <form action="/SalarySlip" method="post">
+        <div class="email-container">
+            <input type="hidden" name="empCode" th:value="${employeePayScale.empCode}">
+            <input type="hidden" name="name" th:value="${employeePayScale.username}">
+            <input type="hidden" name="email" th:value="${employeePayScale.userEmail}">
+            <input type="hidden" name="totalCheckinCount" th:value="${employeePayScale.workingDays}">
+            <input type="hidden" name="allocatedSalary" th:value="${employeePayScale.salary}">
+            <input type="hidden" name="permissionCount" th:value="${employeePayScale.payrollPermission}">
+            <input type="hidden" name="sickLeaveDays" th:value="${employeePayScale.sickLeaveDays}">
+            <input type="hidden" name="casualLeaveDays" th:value="${employeePayScale.casualLeaveDays}">
+            <input type="hidden" name="permissionPayroll" th:value="${employeePayScale.permissionPayscale}">
+            <input type="hidden" name="casualPayroll" th:value="${employeePayScale.casualLeavePayscale}">
+            <input type="hidden" name="sickPayroll" th:value="${employeePayScale.sickLeavePayscale}">
+            <input type="hidden" name="grossSalary" th:value="${grossSalary}">
+            <input type="hidden" name="pfDeduction" th:value="${#numbers.formatDecimal(pfDeduction, 2, 'COMMA', 2, 'POINT')}">
+            <input type="hidden" name="netPay" th:value="${#numbers.formatDecimal(netPay, 2, 'COMMA', 2, 'POINT')}">
+            
+            <button type="submit" class="email-button">Confirm</button>
+        </div>
+    </form>
+
+    <p class="footer">&copy; 2024 Innowell Engineering International Pvt Ltd.</p>
+</div>
+
+</body>
+</html>

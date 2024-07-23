@@ -278,9 +278,17 @@ footer {
 	max-width: 140px;
 	max-height: 120px;
 }
+  .chart-container {
+            width: 100%;
+            height: auto;
+            max-width: 400px;
+            margin: auto;
+        }
 
     </style>
 </head>
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <body>
    <input type="hidden" id="status" th:value="${status}">
 
@@ -340,12 +348,12 @@ footer {
         </div>
         
         <div class="custom-dropdown">
-       <button th:onclick="|window.location.href='/report'|">AdminReport</button>
+       <button th:onclick="|window.location.href='/viewTask'|">ManagerTask</button>
         </div>
     
         <div class="custom-dropdown">
-            <form action="/timeSheet" class="a1" method="post">
-                <button class="custom-dropbtn">Timesheet <i class="fa fa-caret-down"></i></button>
+            <form action="/timeSheet" class="a1" method="get">
+                <button class="custom-dropbtn" type="submit">Timesheet <i class="fa fa-caret-down"></i></button>
             </form>
         </div>
         
@@ -381,7 +389,70 @@ footer {
         </div>
     </div>
 
-    <footer>
+ 
+        <div class="chart-container">
+        <canvas id="employeeLeaveChart"></canvas>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="text/javascript" th:inline="javascript">
+        var status = /*[[${status}]]*/ '';
+        if(status === "failed") {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Sorry!',
+                text: 'Your payslip has not been initiated by Manager!'
+            });
+        }
+        
+        const permissionCount = "[[${permissionCount}]]";
+        const sickLeaveDays = "[[${sickLeaveDays}]]";
+        const casualLeaveDays = "[[${casualLeaveDays}]]";
+        const totalCheckinCount =" [[${totalCheckinCount}]]";
+
+        const ctx = document.getElementById('employeeLeaveChart').getContext('2d');
+        const employeeLeaveChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Permission Count', 'Sick Leave Days', 'Casual Leave Days', 'Total Working Days'],
+                datasets: [{
+                    label: 'Employee Leave Data',
+                    data: [permissionCount, sickLeaveDays, casualLeaveDays, totalCheckinCount],
+                    backgroundColor: [
+                        'rgba(128, 0, 128, 0.6)', 
+                        'rgba(255, 165, 0, 0.6)',  
+                        'rgba(128, 128, 0, 0.6)',  
+                        'rgba(189, 183, 107, 0.6)'  
+                    ],
+                    borderColor: [
+                        'rgba(128, 0, 128, 1)',  
+                        'rgba(255, 165, 0, 1)',  
+                        'rgba(128, 128, 0, 1)',  
+                        'rgba(189, 183, 107, 1)'  
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Employee Leave and Working Days'
+                    }
+                }
+            }
+        });
+    
+    </script>
+       <footer>
         <div class="footer-container">
             <div class="footer-logo">
                 <img src="images/a6.png" alt="Innowell Logo">
@@ -432,21 +503,5 @@ footer {
             </div>
         </div>
     </footer>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script type="text/javascript" th:inline="javascript">
-        var status = /*[[${status}]]*/ '';
-        if(status === "failed") {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Sorry!',
-                text: 'Your payslip has not been initiated by Manager!'
-            });
-        }
-    </script>
 </body>
 </html>

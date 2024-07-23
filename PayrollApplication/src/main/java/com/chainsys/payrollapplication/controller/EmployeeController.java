@@ -2,9 +2,12 @@ package com.chainsys.payrollapplication.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,7 +40,7 @@ public class EmployeeController {
 	public String showLogIn() {
 		return "login"; 
 	}  
-	
+
 	@RequestMapping("/joinUs")
 	public String showJoinUs() {
 		return "joinUs"; 
@@ -47,43 +50,82 @@ public class EmployeeController {
 	public String showContact() {
 		return "contact"; 
 	}  
-	
+
 	@RequestMapping("/permission")
 	public String applyPermission() {
 		return "permission"; 
 	}  
-	
+
 	@RequestMapping("/leave")
 	public String applyLeave() {
 		return "leave"; 
 	} 
-	
+
 	@RequestMapping("/getPermission")
 	public String viewPermissionStatus() {
 		return "permissionStatus"; 
 	} 
-	
+
 	@RequestMapping("/getLeave")
 	public String viewLeaveStatus() {
 		return "leaveStatus"; 
 	} 
-	
+
 	@RequestMapping("/report")
 	public String admin() {
-		return "adminReport"; 
+		return "reportList"; 
 	}  
-	
+
 	@RequestMapping("/approvedpayslip")
 	public String employeePayslip() {
 		return "employeePayslip.jsp"; 
 	}  
 
-	
+
 	@RequestMapping("/home")
-	public String homePage() {
+	public String homePage(HttpSession session, Model model) {
+		int empCode = (Integer) session.getAttribute("emp_code");
+
+		String empName = payrollDAO.getEmployeeName(empCode); // name
+		int hour = payrollDAO.getTotalWorkingHours(empCode); // hour
+		String empEmail = payrollDAO.getEmployeeEmail(empCode); // email        
+		int permissionCount = payrollDAO.countPermissionsPayroll(empCode); // permission
+		int sickLeaveDays = payrollDAO.countSickLeavePayroll(empCode); // sick
+		int casualLeaveDays = payrollDAO.countCasualLeavePayroll(empCode); // casual
+		int totalCheckinCount = payrollDAO.getTotalCheckinCount(empCode); // workingDays
+		int salary = payrollDAO.getEmployeeSalary(empCode); // salary
+		payrollDAO.salaryPending(empCode); 
+
+		PayrollList payrollList = new PayrollList();
+
+		if (totalCheckinCount > 22) {
+			payrollDAO.permissionCountDeleteByDays(empCode);
+			payrollDAO.leaveCountDeleteByDays(empCode);
+			payrollDAO.checkInsOutsDeleteByDays(empCode);
+			payrollDAO.EmpPayscaleDeleteByDays(empCode);
+
+			payrollList.setEmpCode(empCode);
+			payrollList.setEmpName(empName);
+			payrollList.setEmpEmail(empEmail);
+			payrollList.setPermissionCount(permissionCount);
+			payrollList.setSickLeaveDays(sickLeaveDays);
+			payrollList.setCasualLeaveDays(casualLeaveDays);
+			payrollList.setTotalCheckinCount(totalCheckinCount);
+			payrollList.setWorkingHours(hour);
+			payrollList.setSalary(salary);
+
+			payrollDAO.insertOrUpdateLeavePermission(payrollList);
+		}
+
+
+		model.addAttribute("payrollList", payrollList);
+		model.addAttribute("permissionCount", permissionCount);
+		model.addAttribute("sickLeaveDays", sickLeaveDays);
+		model.addAttribute("casualLeaveDays", casualLeaveDays);
+		model.addAttribute("totalCheckinCount", totalCheckinCount);
+
 		return "home"; 
 	} 
-
 	@RequestMapping("/permissionPage")
 	public String Permission() {
 		return "viewPermission.jsp"; 
@@ -98,43 +140,43 @@ public class EmployeeController {
 	public String timesheet() {
 		return "payrollCalculation"; 
 	}  
-	
-    @PostMapping("/register")
-    public String registerFormSubmission(
-            @RequestParam("name") String name,
-            @RequestParam("role") String role,
-            @RequestParam("email") String email,
-            @RequestParam("contact") String contact,
-            @RequestParam("pass") String password,
-            @RequestParam("image") MultipartFile imageFile,
-            RedirectAttributes redirectAttributes,
-            Model model) throws IOException {
 
-        byte[] image = imageFile.getBytes();
+	@PostMapping("/register")
+	public String registerFormSubmission(
+			@RequestParam("name") String name,
+			@RequestParam("role") String role,
+			@RequestParam("email") String email,
+			@RequestParam("contact") String contact,
+			@RequestParam("pass") String password,
+			@RequestParam("image") MultipartFile imageFile,
+			RedirectAttributes redirectAttributes,
+			Model model) throws IOException {
 
-        if (payrollDAO.isUserExist(email, contact)) {
-            model.addAttribute("status", "failed");
-            return "redirect:/reg";
-        }
+		byte[] image = imageFile.getBytes();
 
-        Employees employees = new Employees();
-        employees.setUserName(name);
-        employees.setDesignation(role);
-        employees.setUserEmail(email);
-        employees.setUserMobile(contact);
-        employees.setUserPassword(password);
-        employees.setImageData(image);
+		if (payrollDAO.isUserExist(email, contact)) {
+			model.addAttribute("status", "failed");
+			return "redirect:/reg";
+		}
 
-        int randomNumber = 1000 + (int) (Math.random() * 9000);
-        employees.setEmpCode(randomNumber);
+		Employees employees = new Employees();
+		employees.setUserName(name);
+		employees.setDesignation(role);
+		employees.setUserEmail(email);
+		employees.setUserMobile(contact);
+		employees.setUserPassword(password);
+		employees.setImageData(image);
 
-        payrollDAO.insertEmployee(employees);
+		int randomNumber = 1000 + (int) (Math.random() * 9000);
+		employees.setEmpCode(randomNumber);
 
-        redirectAttributes.addFlashAttribute("status", "success");
-        redirectAttributes.addFlashAttribute("randomNumber", randomNumber);
+		payrollDAO.insertEmployee(employees);
 
-        return "redirect:/reg"; 
-    }
+		redirectAttributes.addFlashAttribute("status", "success");
+		redirectAttributes.addFlashAttribute("randomNumber", randomNumber);
+
+		return "redirect:/reg"; 
+	}
 
 
 	@PostMapping("/login")
@@ -238,10 +280,10 @@ public class EmployeeController {
 
 	@PostMapping("/viewPermission")
 	public String permissionStatus(Model model, HttpSession session) {
-	    int empCode = (Integer) session.getAttribute("emp_code");
-	    ArrayList<PermissionCount> permissionCount = new ArrayList<>(payrollDAO.getPermissionStatus(empCode));
-	    model.addAttribute("permissionCount", permissionCount);
-	    return "forward:/getPermission";
+		int empCode = (Integer) session.getAttribute("emp_code");
+		ArrayList<PermissionCount> permissionCount = new ArrayList<>(payrollDAO.getPermissionStatus(empCode));
+		model.addAttribute("permissionCount", permissionCount);
+		return "forward:/getPermission";
 	}
 
 	@PostMapping("/viewLeave")
@@ -249,32 +291,10 @@ public class EmployeeController {
 		int empCode = (Integer) session.getAttribute("emp_code");
 		ArrayList<LeaveReport> leaveReport = new ArrayList<>(payrollDAO.getAllLeaveStatus(empCode));
 		model.addAttribute("leaveReport", leaveReport);
-		 return "forward:/getLeave";
+		return "forward:/getLeave";
 	}
 
-
-	@PostMapping("/adminReport")
-	public String adminReport(
-			@RequestParam("name") String name,
-			@RequestParam("comments") String comments,
-			HttpSession session,
-			RedirectAttributes redirectAttributes) {
-		AdminReport adminReport=new AdminReport();
-		Validations validations=new  Validations();
-		validations.validateString(name);
-		validations.isSpecialChar(comments);
-
-		adminReport.setName(name);
-		adminReport.setText(comments);
-
-		int empCode = (int) session.getAttribute("emp_code");	   
-		payrollDAO.insertAdminReport(adminReport,empCode);
-		redirectAttributes.addFlashAttribute("status", "success");
-		return "redirect:/report"; 
-	}
-
-
-	@PostMapping("/timeSheet")
+	@GetMapping("/timeSheet")
 	public String timeSheetValidation(HttpSession session,Model model) {
 		int empCode = (Integer) session.getAttribute("emp_code");
 
@@ -305,6 +325,12 @@ public class EmployeeController {
 			payrollList.setSalary(salary);
 			payrollDAO.insertOrUpdateLeavePermission(payrollList);
 			model.addAttribute("payrollList", payrollList);
+
+
+			model.addAttribute("permissionCount", permissionCount);
+			model.addAttribute("sickLeaveDays", sickLeaveDays);
+			model.addAttribute("casualLeaveDays", casualLeaveDays);
+			model.addAttribute("totalCheckinCount", totalCheckinCount);
 			return "payrollCalculation";
 
 		}else {
@@ -321,6 +347,11 @@ public class EmployeeController {
 
 			payrollDAO.insertOrUpdateLeavePermission(payrollList);
 			model.addAttribute("payrollList", payrollList);
+
+			model.addAttribute("permissionCount", permissionCount);
+			model.addAttribute("sickLeaveDays", sickLeaveDays);
+			model.addAttribute("casualLeaveDays", casualLeaveDays);
+			model.addAttribute("totalCheckinCount", totalCheckinCount);
 			return "payrollCalculation";
 		}
 	}
@@ -394,6 +425,13 @@ public class EmployeeController {
 		model.addAttribute("netPay", netPay);
 		model.addAttribute("salary", allocateSalary);
 
+
+
+		model.addAttribute("permissionCount", permissionCount);
+		model.addAttribute("sickLeaveDays", sickLeaveDays);
+		model.addAttribute("casualLeaveDays", casualLeaveDays);
+		model.addAttribute("totalCheckinCount", totalCheckinCount);
+
 		return "employeePayslip";
 	}
 
@@ -425,7 +463,56 @@ public class EmployeeController {
 
 	}
 
+	@GetMapping("/viewTask")
+	public String adminReport(Model model,HttpSession session) {
+		int empCode = (Integer) session.getAttribute("emp_code");
+		List<AdminReport> adminReport = payrollDAO.getComments(empCode); 
+		model.addAttribute("adminReport", adminReport); 
+		return "viewTask";   
+	}
+
+	@PostMapping("/taskInformation")
+	public String leaveStatus(@RequestParam("empCode") int empCode,@RequestParam("action") String action,Model model) {
+		
+		if (action != null) {
+			if (action.equalsIgnoreCase("rejected")) {
+				payrollDAO.updateTaskList(empCode, action); 
+			} else if (action.equalsIgnoreCase("accepted")) {    	 
+				payrollDAO.updateTaskList(empCode, action);
+			}
+		}
+		List<AdminReport> adminReport = payrollDAO.getComments(empCode); 
+		model.addAttribute("adminReport", adminReport); 
+		return "viewTask";
+	}
+
+	@PostMapping("/updateTimeDuration")
+	public String updateTaskTime(@RequestParam("timeDurations")int taskTime,Model model,HttpSession session) {
+		int empCode = (Integer) session.getAttribute("emp_code");
+		int getTaskDurations=payrollDAO.getTimeDurations(empCode);
+		int sortTimeDurations=getTaskDurations-(taskTime);
+		payrollDAO.updateTaskDuration(empCode, sortTimeDurations);	
+		List<AdminReport> adminReport = payrollDAO.getComments(empCode); 
+		model.addAttribute("adminReport", adminReport);
+		return "viewTask";   
+	}
 	
+	@PostMapping("/rejectedReason")
+	public String rejectedReason(@RequestParam("rejectReason") String reason,@RequestParam("action") String action,Model model,HttpSession session) {
+		int empCode = (Integer) session.getAttribute("emp_code");
+	
+		if (action != null) {
+			if (action.equalsIgnoreCase("rejected")) {
+				payrollDAO.updateTaskList(empCode, action); 
+				payrollDAO.reasonForRejection(empCode, reason);
+			} else if (action.equalsIgnoreCase("accepted")) {    	 
+				payrollDAO.updateTaskList(empCode, action);
+			}
+		}
+		List<AdminReport> adminReport = payrollDAO.getComments(empCode); 
+		model.addAttribute("adminReport", adminReport); 
+		return "viewTask";
+	}
 
 
 }

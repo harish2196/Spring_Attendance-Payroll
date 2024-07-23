@@ -100,11 +100,11 @@ public class PayrollDAOImpl implements PayrollDAO {
 		int rowsAffected = jdbcTemplate.update(sql, params);      
 	}
 
-	public void insertAdminReport(AdminReport adminReport, int empCode) {
-		String sql = "INSERT INTO admin_report (emp_code, name, report_text) VALUES (?, ?, ?)";
-		Object[] params = { empCode, adminReport.getName(), adminReport.getText() };
+	public void insertAdminReport(AdminReport adminReport) {
+		String sql = "INSERT INTO admin_report (emp_code, name,project_title,project_features,time_duration) VALUES (?, ?, ?, ?, ?)";
+		Object[] params = {adminReport.getEmpCode(),adminReport.getName(),adminReport.getProjectTitle(),adminReport.getProjectFeatures(),adminReport.getTimeDurations() };
 		int rowsAffected = jdbcTemplate.update(sql, params);
-		System.out.println("Rows Affected: " + rowsAffected);
+	
 	}
 
 	public List<Employees> viewEmployeeDetails() {
@@ -117,8 +117,13 @@ public class PayrollDAOImpl implements PayrollDAO {
 		return jdbcTemplate.query(getAllQuery, new CheckInOutHandler());
 	}
 
-	public List<AdminReport> getComments() {
-		String getAllQuery = "SELECT emp_code, name, report_text FROM admin_report";
+	public List<AdminReport> getComments(int empCode) {
+		String getAllQuery = "SELECT emp_code,name,project_title,project_features,time_duration,status,reason FROM admin_report WHERE emp_code=?";
+		return jdbcTemplate.query(getAllQuery, new AdminReportMapper(),empCode);
+	}
+	
+	public List<AdminReport> getAdminTaskList() {
+		String getAllQuery = "SELECT emp_code,name,project_title,project_features,time_duration,status,reason FROM admin_report";
 		return jdbcTemplate.query(getAllQuery, new AdminReportMapper());
 	}
 
@@ -416,7 +421,44 @@ public class PayrollDAOImpl implements PayrollDAO {
 		String deleteQuery = "DELETE FROM employee_payscale WHERE emp_code = ?";
 		int rowsAffected = jdbcTemplate.update(deleteQuery, empCode);			     
 	}
+	
+	public List<Employees> getExistingEmployeeCodes() {
+		String getAllQuery = "SELECT emp_code,username,designation,useremail,userpassword,usermobile,image,salary FROM Employee_details";
 
+	    return jdbcTemplate.query(getAllQuery, new PayrollMapper());
+	}
+	
+    public List<CheckInsAndCheckOuts> getEmployeeCodes(String date) {
+        String getEmpCheckIns = "select emp_code,name,checkin_time,checkout_time from checkins_checkouts where DATE(checkin_time) = ?";
+        return jdbcTemplate.query(getEmpCheckIns, new CheckInOutHandler() , date);
+    }
+
+	public boolean updateTaskList(int empCode, String status) {
+		String query = "UPDATE admin_report SET status = ? WHERE emp_code = ?";
+		int rowCount = jdbcTemplate.update(query, status, empCode);
+		if (rowCount > 0) {
+			return true;
+		} else {	           
+			return false;
+		}
+	}
+
+	public int getTimeDurations(int empCode) {
+	    String getEmpCheckIns = "select time_duration from admin_report where emp_code = ?";
+	    return jdbcTemplate.queryForObject(getEmpCheckIns, Integer.class, empCode);
+	}
+
+	public void updateTaskDuration(int empCode, int timeDuration) {
+	    String updateQuery = "UPDATE admin_report SET time_duration = ? WHERE emp_code = ?";
+	    jdbcTemplate.update(updateQuery, timeDuration, empCode);
+	}
+
+	public void reasonForRejection(int empCode, String reason) {
+	    String updateQuery = "UPDATE admin_report SET reason = ? WHERE emp_code = ?";
+	    jdbcTemplate.update(updateQuery, reason, empCode);
+	}
+
+	
 }
 
 

@@ -20,12 +20,14 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+			display: none;
         }
 
         h2 {
             text-align: center;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-weight:bolder;
+            margin-top:2%;
+            text-shadow:2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         table {
@@ -52,44 +54,169 @@
             background-color: #ddd;
         }
 
-        .back-button {
-            margin-left: 4.7%;
-            margin-top: 2%;
-            color: firebrick;
-            font-size: 18px;
+      .back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: black;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+}
+
+.back-button:hover {
+    background-color: lightskyblue;;
+}
+
+.back-btn{
+  display: inline-block;
+    padding: 10px 20px;
+    background-color: rebeccapurple;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+      text-decoration: none;
+    border-radius: 5px;
+}
+.back-btn:hover {
+    background-color: palevioletred; 
+}
+
+.back-btn span {
+    pointer-events: none; 
+}
+
+
+.content{
+height: 100vh;
+background: gray;
+margin: 20px auto;
+   background-color: #fff;
+ border-radius: 8px;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   width: 80%;
+}
+
+.navbar{
+height: 10vh;
+background: #aaaaaa;
+}
+
+.side input{
+border:1px solid;
+padding:10px;
+background: none;
+}
+
+
+.side input[type="submit"] {
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.side .button.check-ins-outs {
+    background-color: #3498db; 
+}
+
+.side .button.check-ins-outs:hover {
+    background-color: #2980b9; 
+}
+
+.side .button.absentees {
+    background-color: #e74c3c; 
+}
+
+.side .button.absentees:hover {
+    background-color: #c0392b; 
+}
+
+
+        button {
+            background-color: #4CAF50; 
+            color: white;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
+
+        button:hover {
+            background-color: #45a049; 
+            transform: scale(1.05); 
+        }
+
     </style>
 </head>
 <body>
 
-<div class="container">
-    <a th:href="@{/homePageAdmin}" class="back-button">
-        <span>&lt;.Back</span>
-    </a>
+<div class="navbar">
+  <div class="side">
+      <input type="submit" onclick="openAbsentees()" value="Absentees" class="button absentees">
+    <input type="submit" onclick="openleaveDetailsTable()" value="CheckInsOuts" class="button check-ins-outs">
+</div>
 
+    <div>
+        <a th:href="@{/homePageAdmin}" class="back-button">
+            <span>Back</span>
+        </a>
+    </div>
+</div>
+
+<div class="container" id="container">
     <h2>Employee Check-Ins & Check-Outs</h2>
-
     <table id="leaveDetailsTable" class="table table-striped table-hover">
         <thead>
-            <tr>
-                <th>Employee Code</th>
-                <th>Name</th>
-                <th>Check-In Time</th>
-                <th>Check-Out Time</th>
-            </tr>
+        <tr>
+            <th>Employee Code</th>
+            <th>Name</th>
+            <th>Check-In Time</th>
+            <th>Check-Out Time</th>
+        </tr>
         </thead>
         <tbody>
-            <tr th:each="checkInOut : ${session.checkInsAndCheckOuts}">
-                <td th:text="${checkInOut.empCode}"></td>
-                <td th:text="${checkInOut.name}"></td>
-                <td th:text="${checkInOut.checkIn}"></td>
-                <td th:text="${checkInOut.checkOut}"></td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(session.checkInsAndCheckOuts)}">
-                <td colspan="4">No check-ins and check-outs found.</td>
-            </tr>
+        <tr th:each="checkInOut : ${session.checkInsAndCheckOuts}">
+            <td th:text="${checkInOut.empCode}"></td>
+            <td th:text="${checkInOut.name}"></td>
+            <td th:text="${checkInOut.checkIn}"></td>
+            <td th:text="${checkInOut.checkOut}"></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(session.checkInsAndCheckOuts)}">
+            <td colspan="4">No check-ins and check-outs found.</td>
+        </tr>
         </tbody>
     </table>
+</div>
+
+<div class="content" id="content">
+    <h2>Absentees</h2>
+      <form action="/filterAbsentees" method="get" style="margin-left:33%;">
+            <label for="filterDate">Filter by Date:</label>
+            <input type="date" id="filterDate" name="filterDate">
+            <button type="submit">Filter</button>
+        </form>
+        
+    <ul>
+    <table>
+    <thead>
+        <tr>
+            <th>Emp Code</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="empCode : ${session.employeeCodes}">
+            <td th:text="${empCode.empCode}"></td>
+            <td th:text="${empCode.name}"></td>
+        </tr>
+    </tbody>
+</table>
+
+       
+    </ul>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -99,6 +226,16 @@
     $(document).ready(function() {
         $('#leaveDetailsTable').DataTable();
     });
+
+    function openAbsentees() {
+        document.getElementById("content").style.display = "block";
+        document.getElementById("container").style.display = "none";
+    }
+
+    function openleaveDetailsTable() {
+        document.getElementById("container").style.display = "block";
+        document.getElementById("content").style.display = "none";
+    }
 </script>
 
 </body>

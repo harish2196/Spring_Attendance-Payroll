@@ -1,104 +1,144 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Report List</title>
-     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Report</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #17a2b8;
         }
-
-        h1 {
-            font-family: 'Arial', sans-serif;
+        .survey-form {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        .survey-form .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .survey-form .form-group label {
+            flex: 1;
             font-weight: bold;
-            text-align: center;
-            margin-bottom: 2%;
-            color: darkmagenta;
+            margin-bottom: 0;
         }
-
-        .table-hover tbody tr:hover {
-            background-color: lightgrey;
+        .survey-form .form-group input,
+        .survey-form .form-group textarea {
+            flex: 2;
+            border-radius: 5px;
+            padding: 0.5rem;
         }
-
-        .hover-effect:hover {
-            color: #ff6347;
+        .survey-form .form-group textarea {
+            resize: none;
         }
-
-        .btn-back {
-            background-color: firebrick;
-            border-color: firebrick;
+        .survey-form button {
+            background-color: #6f42c1;
             color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
         }
-
-        .btn-back:hover {
-            background-color: darkred;
-            border-color: darkred;
+        .survey-form button:hover {
+            background-color: #5a32a0;
         }
-
-        .btn-search {
-            background-color: green;
-            border-color: green;
-            color: white;
-            padding: 3.3px 7px;
-            margin-left: 0.2%;
-            margin-top: -0.6%;
+        .table-container {
+            display: none; 
+            margin-top: 1rem;
         }
-
-        .btn-search:hover {
-            background-color: darkgreen;
-            border-color: darkgreen;
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
         }
-
-        .btn {
-            margin-left: 41.5%;
+        .table-container th, .table-container td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        .btn-group .btn {
+            width: 45%;
         }
     </style>
 </head>
 <body>
-<div class="container my-5">
-    <h1>Report List</h1>
-
-   <!--  <form action="/reportSearch" method="post">
-        <input style="margin-left:38.5%;margin-bottom:2%" type="text" name="empcode" placeholder="Search EmpCode">
-        <input type="submit" value="Search" class="btn btn-search">
-    </form> -->
-
-    <table id="reportDetailsTable" class="table table-striped table-hover">
-        <thead class="thead-dark">
-        <tr>
-            <th>Employee Code</th>
-            <th>Name</th>
-            <th>Report Text</th>
-        </tr>
-        </thead>
-       <tbody>
-    <tr th:each="report : ${adminReport}" class="hover-effect">
-        <td th:text="${report.empCode}"></td>
-        <td th:text="${report.name}"></td>
-        <td th:text="${report.text}"></td>
-    </tr>
-    <tr th:if="${#lists.isEmpty(adminReport)}">
-        <td colspan="3" class="text-center">No reports found</td>
-    </tr>
-</tbody>
-
-    </table>
-    <div class="btn">
-        <a th:href="@{/homePageAdmin}" class="btn btn-primary btn-back">Back</a>
-    </div>
+    <input type="hidden" id="status" th:value="${status}">
+    <div class="survey-form">
+        <h3 style="text-align: center; color: darkmagenta; font-weight: bold;margin-bottom:5%;">Employee Task Report Form</h3>
+        <form id="reportForm" action="/adminReport" method="post">
+            <div class="form-group">
+                <label for="employeeCode">Emp Code</label>
+                <input type="text" class="form-control" id="employeeCode" name="employeeCode" placeholder="Employee Code..." pattern="[0-9]{1,10}" required="required">
+            </div>
+              <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Name..." pattern="[A-Za-z]{2,20}" required="required">
+            </div>
+            <div class="form-group">
+                <label for="projectTitle">Project Title</label>
+                <input type="text" class="form-control" id="projectTitle" name="projectTitle" placeholder="Project Title..." required="required">
+            </div>
+             <div class="form-group">
+                <label for="timeDuration">Time Duration</label>
+                <input type="text" class="form-control" id="timeDuration" name="timeDuration" placeholder="Time Duration..." required="required">
+            </div>
+            <div class="form-group">
+                <label for="projectFeatures">Project Features</label>
+                <textarea class="form-control" id="projectFeatures" name="projectFeatures" rows="3" placeholder="Project Features..." required="required"></textarea>
+            </div>
+                     
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      
+      <div class="btn-group">
+    <button type="button" class="btn btn-primary" onclick="toggleView('form')">Show Form</button>   
+    <button type="button" class="btn btn-primary" style="background-color: firebrick;" onclick="window.location.href='/homePageAdmin'">Back</button>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#reportDetailsTable').DataTable();
-    });
-</script>
+<form action="/adminViewTask" method="get" style="margin-left: 34%;margin-top:2%;">
+        <button type="submit" class="btn btn-primary">View Table Data</button>
+</form>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="text/javascript">
+        var status = document.getElementById("status").value;
+        if (status === "success") {
+            Swal.fire({
+                icon: 'success',
+                title: 'Submitted!',
+                text: 'Please await confirmation of your task acceptance'
+            });
+        }
+
+        function toggleView(view) {
+            var form = document.getElementById('reportForm');
+            var tableContainer = document.getElementById('tableContainer');
+
+            if (view === 'form') {
+                form.style.display = 'block';
+                tableContainer.style.display = 'none';
+            } else if (view === 'table') {
+                form.style.display = 'none';
+                tableContainer.style.display = 'block';
+            }
+        }
+    </script>
 </body>
 </html>

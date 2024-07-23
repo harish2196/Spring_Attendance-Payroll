@@ -21,17 +21,17 @@ public interface PayrollDAO {
 	public void insertCheckOutTime(int empCode);
 	public void insertPermission(PermissionCount permissionCount,int empCode);
 	public void insertLeaveReport(LeaveReport leaveReport, int empCode);
-	public void insertAdminReport(AdminReport adminReport, int empCode);
+	public void insertAdminReport(AdminReport adminReport);
 	public List<Employees> viewEmployeeDetails();
 	public boolean isUserExist(String useremail, String usermobile); 
 	public List<CheckInsAndCheckOuts> viewCheckInsAndOuts();
 	public void updateEmployeeDetails(Employees employee);
 	public void deleteEmployeeById(int id);
-	public List<AdminReport> getComments();
+	public List<AdminReport> getComments(int empCode);
 	public List<PermissionCount> getPermissionInfo();
 	public List<LeaveReport> getAllLeaveReports();
 	public boolean updatePermissionStatus(int empcode, String status); 
-//	public int remainRejectLeaveDays(int id);
+	//	public int remainRejectLeaveDays(int id);
 	public boolean insertTotalLeaveDays(int empCode, int totalLeaveDays);
 	public int getTotalLeaveDays(int id, String toDate, String fromDate);
 	public boolean updateLeaveStatus(int empCode, String status);
@@ -63,4 +63,12 @@ public interface PayrollDAO {
 	public void leaveCountDeleteByDays(int empCode);
 	public void checkInsOutsDeleteByDays(int empCode);
 	public void EmpPayscaleDeleteByDays(int empCode);
+	public List<Employees> getExistingEmployeeCodes();
+	public int getTimeDurations(int empCode);
+	public boolean updateTaskList(int empCode, String status);
+	public List<AdminReport> getAdminTaskList();
+	public void updateTaskDuration(int empCode, int timeDuration); 
+	public List<CheckInsAndCheckOuts> getEmployeeCodes(String date);
+	public void reasonForRejection(int empCode, String reason);
+
 }

@@ -2,6 +2,7 @@ package com.chainsys.payrollapplication.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 
@@ -53,22 +54,24 @@ public class AdminController {
 	public String updateEmployee() {
 		return "updateEmployee"; 
 	} 
-	
+
 	@RequestMapping("/checkInsOuts")
 	public String employeeCheckInsouts() {
 		return "checkInsOuts"; 
 	} 
-	
+
 	@RequestMapping("/adminChoice")
 	public String adminSwitch() {
 		return "adminChoice"; 
 	}
-	
+
 	@RequestMapping("/employeePayslip")
 	public String payslip() {
 		return "employeePayscale"; 
 	}
-	
+
+
+
 	@PostMapping("/adminLogin")
 	public String adminLogin(@RequestParam("username") String name,
 			@RequestParam("password") String password,
@@ -121,23 +124,11 @@ public class AdminController {
 		return "viewEmployees"; 
 	}
 
-	@GetMapping("/checkInOut")
-	public String checkInOut(HttpSession session) {
-		List<CheckInsAndCheckOuts> checkInsAndCheckOuts = payrollDAO.viewCheckInsAndOuts(); 
-
-		session.setAttribute("checkInsAndCheckOuts", checkInsAndCheckOuts); 
-		return  "redirect:/checkInsOuts";
-	}
 
 	@PostMapping("/update")
 	public String updateEmployee(
-			@RequestParam("id") int id,
-			@RequestParam("name") String name,
-			@RequestParam("role") String designation,
-			@RequestParam("email") String email,
-			@RequestParam("contact") String phoneNumber,
-			@RequestParam("salary") int salary,
-			Model model) {
+			@RequestParam("id") int id,@RequestParam("name") String name,@RequestParam("role") String designation,@RequestParam("email") String email,
+			@RequestParam("contact") String phoneNumber,@RequestParam("salary") int salary,Model model) {
 		Validations validations=new  Validations();
 		validations.validateString(name);
 		validations.validateString(designation);
@@ -167,14 +158,6 @@ public class AdminController {
 		return "viewEmployees"; 
 
 	}
-
-	@GetMapping("/comments")
-	public String adminReport(Model model) {
-	    List<AdminReport> adminReport = payrollDAO.getComments(); 
-	    model.addAttribute("adminReport", adminReport); 
-	    return "reportList";   
-	}
-
 
 	@PostMapping("/reportSearch")  
 	public String getEmployeeReports(@RequestParam("empcode") int empCode,Model model) {
@@ -426,6 +409,91 @@ public class AdminController {
 	}
 
 
+	//	@GetMapping("/employeeAbsence")
+	//    public void employeeAbsence(Model model) {
+	//      
+	//        List<Integer> allEmployeeCodes = payrollDAO.getExistingEmployeeCodes();
+	//        List<CheckInsAndCheckOuts> existingEmployeeCodes = payrollDAO.getEmployeeCodes("2024-07-22");
+	//  
+	//        List<Integer> existingEmpCodes = existingEmployeeCodes.stream()
+	//                .map(CheckInsAndCheckOuts::getEmpCode)
+	//                .collect(Collectors.toList());
+	//
+	//        List<Integer> missingEmployeeCodes = allEmployeeCodes.stream()
+	//                .filter(empCode -> !existingEmpCodes.contains(empCode))
+	//                .collect(Collectors.toList());
+	//
+	//        model.addAttribute("employeeCodes", missingEmployeeCodes);
+	//       
+	//    }
+
+	@PostMapping("/adminReport")
+	public String adminReport(
+			@RequestParam("employeeCode") int employeeCode,@RequestParam("name") String name,@RequestParam("projectTitle") String projectTitle,@RequestParam("projectFeatures") String projectFeatures,
+			@RequestParam("timeDuration") int timeDuration,HttpSession session,RedirectAttributes redirectAttributes) {
+		AdminReport adminReport=new AdminReport();
+		Validations validations=new  Validations();
+		validations.validateString(name);
+
+		adminReport.setEmpCode(employeeCode);
+		adminReport.setName(name);
+		adminReport.setProjectTitle(projectTitle);
+		adminReport.setProjectFeatures(projectFeatures);
+		adminReport.setTimeDurations(timeDuration);
+
+		payrollDAO.insertAdminReport(adminReport);
+		redirectAttributes.addFlashAttribute("status", "success");
+		return "redirect:/report"; 
+	}
+
+	@GetMapping("/adminViewTask")
+	public String adminReport(Model model) {
+		List<AdminReport> adminReport = payrollDAO.getAdminTaskList();
+		model.addAttribute("adminReport", adminReport); 
+		return "adminTask";   
+	}
+
+	@GetMapping("/checkInOut")
+	public String checkInOut(HttpSession session,Model model) {
+		List<CheckInsAndCheckOuts> checkInsAndCheckOuts = payrollDAO.viewCheckInsAndOuts(); 
+		List<Employees> allEmployeeCodes = payrollDAO.getExistingEmployeeCodes();
+		List<CheckInsAndCheckOuts> existingEmployeeCodes = payrollDAO.getEmployeeCodes("2024-07-22");
+
+		List<Integer> existingEmpCodes = existingEmployeeCodes.stream()
+				.map(CheckInsAndCheckOuts::getEmpCode )
+				.collect(Collectors.toList());
+		
+		List<CheckInsAndCheckOuts> missingEmployeeCodes = allEmployeeCodes.stream()
+				.filter(empCode -> !existingEmpCodes.contains(empCode.getEmpCode()))
+				.map(e -> new CheckInsAndCheckOuts(e.getEmpCode(),e.getUserName()))
+				.collect(Collectors.toList());
+
+		session.setAttribute("employeeCodes", missingEmployeeCodes);
+		session.setAttribute("checkInsAndCheckOuts", checkInsAndCheckOuts); 
+		return  "redirect:/checkInsOuts";
+	}
+	
+	
+	@GetMapping("/filterAbsentees")
+	public String filterByDateCheckIns(@RequestParam("filterDate")String filterDate,HttpSession session,Model model) {
+		List<CheckInsAndCheckOuts> checkInsAndCheckOuts = payrollDAO.viewCheckInsAndOuts(); 
+		List<Employees> allEmployeeCodes = payrollDAO.getExistingEmployeeCodes();
+		List<CheckInsAndCheckOuts> existingEmployeeCodes = payrollDAO.getEmployeeCodes(filterDate);
+
+		List<Integer> existingEmpCodes = existingEmployeeCodes.stream()
+				.map(CheckInsAndCheckOuts::getEmpCode )
+				.collect(Collectors.toList());
+		
+		List<CheckInsAndCheckOuts> missingEmployeeCodes = allEmployeeCodes.stream()
+				.filter(empCode -> !existingEmpCodes.contains(empCode.getEmpCode()))
+				.map(e -> new CheckInsAndCheckOuts(e.getEmpCode(),e.getUserName()))
+				.collect(Collectors.toList());
+
+		session.setAttribute("employeeCodes", missingEmployeeCodes);
+		session.setAttribute("checkInsAndCheckOuts", checkInsAndCheckOuts); 
+		return  "redirect:/checkInsOuts";
+		
+	}
 
 
 }

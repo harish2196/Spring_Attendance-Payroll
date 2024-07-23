@@ -6,6 +6,14 @@ public class CheckInsAndCheckOuts {
 	String name;
 	String checkIn;
 	String checkOut;
+	
+	
+	
+	public CheckInsAndCheckOuts(int empCode, String name) {
+		
+		this.empCode = empCode;
+		this.name = name;
+	}
 	public int getEmpCode() {
 		return empCode;
 	}
@@ -17,6 +25,11 @@ public class CheckInsAndCheckOuts {
 	}
 	public CheckInsAndCheckOuts() {
 		super();
+	}
+	@Override
+	public String toString() {
+		return "CheckInsAndCheckOuts [empCode=" + empCode + ", name=" + name + ", checkIn=" + checkIn + ", checkOut="
+				+ checkOut + "]";
 	}
 	public void setName(String name) {
 		this.name = name;

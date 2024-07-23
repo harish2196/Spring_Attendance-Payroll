@@ -34,6 +34,13 @@
             text-align: center;
             margin: 20px 0;
         }
+         .chart-container {
+            width: 100%;
+            height: auto;
+            max-width: 400px;
+            margin: auto;
+        }
+        
         .container {
             width: 80%;
             margin: auto;
@@ -82,6 +89,7 @@
             background-color: brown;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -160,6 +168,10 @@
         </tbody>
     </table>
 
+  
+<div class="chart-container">
+        <canvas id="employeeLeaveChart"></canvas>
+    </div>
     <div class="back-button">
         <a href="/home">Back</a>
     </div>

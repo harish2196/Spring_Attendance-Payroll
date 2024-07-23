@@ -30,16 +30,27 @@
             color:firebrick;
             font-size:18px;
         }
+           .chart-container {
+            width: 100%;
+            height: auto;
+            max-width: 400px;
+            margin: auto;
+        }
+        
     </style>
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-    <a href="home" class="back-button">
-        <span>&lt;-</span> Back
+    <a href="/home" class="back-button">
+        <span>&lt;</span> Back
     </a>
 
     <div class="container">
-        <h2 class="text-center" style="color:dodgerblue">Employee Payroll Information</h2>
+        <h2 class="text-center" style="color: dodgerblue; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">
+    Employee Payroll Information
+</h2>
+
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="thead-dark">
@@ -69,11 +80,59 @@
                     </tr>
                 </tbody>
             </table>
+            <div class="chart-container">
+        <canvas id="employeeLeaveChart"></canvas>
+    </div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+   
+    const permissionCount = "[[${permissionCount}]]";
+    const sickLeaveDays = "[[${sickLeaveDays}]]";
+    const casualLeaveDays = "[[${casualLeaveDays}]]";
+    const totalCheckinCount =" [[${totalCheckinCount}]]";
+
+    const ctx = document.getElementById('employeeLeaveChart').getContext('2d');
+    const employeeLeaveChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Permission Count', 'Sick Leave Days', 'Casual Leave Days', 'Total Working Days'],
+            datasets: [{
+                label: 'Employee Leave Data',
+                data: [permissionCount, sickLeaveDays, casualLeaveDays, totalCheckinCount],
+                backgroundColor: [
+                    'rgba(255, 205, 86, 0.6)',  
+                    'rgba(54, 162, 235, 0.6)',  
+                    'rgba(255, 99, 132, 0.6)',  
+                    'rgba(153, 102, 255, 0.6)' 
+                ],
+                borderColor: [
+                    'rgba(255, 205, 86, 1)', 
+                    'rgba(54, 162, 235, 1)',  
+                    'rgba(255, 99, 132, 1)',  
+                    'rgba(153, 102, 255, 1)'  
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Employee Leave and Working Days'
+                }
+            }
+        }
+    });
+</script>
 </body>
 </html>

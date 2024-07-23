@@ -14,7 +14,11 @@ public class AdminReportMapper implements RowMapper<AdminReport> {
 		AdminReport adminReport=new AdminReport();
 		adminReport.setEmpCode(rs.getInt("emp_code"));
 		adminReport.setName(rs.getString("name"));
-		adminReport.setText(rs.getString("report_text"));
+		adminReport.setProjectTitle(rs.getString("project_title"));
+		adminReport.setProjectFeatures(rs.getString("project_features"));
+		adminReport.setTimeDurations(rs.getInt("time_duration"));
+		adminReport.setStatus(rs.getString("status"));
+		adminReport.setReason(rs.getString("reason"));
 		return adminReport;
 		
 	}
